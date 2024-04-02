@@ -10,6 +10,10 @@
 #include <sys/types.h>
 #include <vector>
 #include <string>
+#include <unistd.h>
+#include <stdarg.h>
+#include <sys/time.h>
+#include <sys/select.h>
 
 using namespace std;
 
@@ -22,6 +26,8 @@ namespace SudoUno {
 
     namespace network {
 
+        typedef int TerminationException;
+
         // TODO: needed?
         class ByteArray {
             public:
@@ -30,9 +36,9 @@ namespace SudoUno {
                 // TODO: needed?
                 string ToString(void) const
                 {
-                    string returnValue  ;
+                    string returnValue;
                     for (int i = 0; i < v.size(); i++)
-                        returnValue.push_back(c: v[i]);
+                        returnValue.push_back(v[i]);
                     return returnValue;
                 }
 
@@ -40,22 +46,106 @@ namespace SudoUno {
                 ByteArray(void){} // Create from nothing
                 ByteArray(string const & input) { // Create from string
                     for (int i = 0; i < input.size(); i++)
-                        v.push_back(x: input[i]);
+                        v.push_back(input[i]);
                 }
                 ByteArray(void * pointer, int size) { // Create from char*
                     char * temp = (char*) pointer;
                     for (int i = 0; i < size; i++)
-                        v.push_back(x: temp[i]);
+                        v.push_back(temp[i]);
                 }
-        }
+        };
 
-        // TODO: Blockable needs to be included
+        class Blockable {
+            protected:
+                int fd;
+            public:
+                Blockable(int f=0):fd(f){;}
+                Blockable(Blockable const & b) : fd(dup(b.fd)){;}
+                virtual ~Blockable(void){;}
+                operator int(void)const {return fd;}
+                void SetFD(int f){fd =f;}
+                int GetFD(void) const {return fd;}
+        };
+        extern Blockable cinWatcher;
+
+        class PipeUser : public Blockable {
+            private:
+                int sender; //The receiver is the base class
+            protected:
+                PipeUser(void);
+                PipeUser(PipeUser const &);
+                PipeUser & operator=(PipeUser const &);
+                void Assign(PipeUser const &);
+                ~PipeUser(void);
+                void BlockForByte(void);
+                void WriteByte(char c='P');
+                char ConsumeByte(void);
+        };
+
+        class Event : public PipeUser {
+            public:
+                Event(void){;}
+                ~Event(){;}
+                Event (Event const &);
+                Event & operator=(Event const &);
+                void Trigger(void);
+                void Wait(void);
+                void Reset(void);
+        };
+
         class Socket : public Blockable {
             private:
                 sockaddr_in socketDescriptor;
-                
-        }
-    }
-}
+                bool open;
+                Event terminator;
+            public:
+                Socket(string const & ipAddress, unsigned int port);
+                Socket(int socketFD);
+                Socket(Socket const & s);
+                Socket & operator=(Socket const & s);
+                ~Socket(void);
+
+                int Open(void);
+                int Write(ByteArray const & buffer);
+                int Read(ByteArray & buffer);
+                void Close(void);
+        };
+
+        class SocketServer : public Blockable
+        {
+            private:
+                int pipeFD[2];
+                Event terminator;
+                sockaddr_in socketDescriptor;
+            public:
+                SocketServer(int port);
+                ~SocketServer();
+                Socket Accept(void);
+                void Shutdown(void);
+        };
+
+        class FlexWait {
+            public:
+                static const int FOREVER; //==-1
+                static const int POLL; // == 0
+            private:
+                std::vector<Blockable*> v;
+            public:
+                FlexWait(int n,...);
+                Blockable * Wait(int timeout=-1);
+        };
+
+        class ThreadSem : public PipeUser {
+            public:
+                ThreadSem(int initialState=0);
+                ThreadSem (ThreadSem const &);
+                ~ThreadSem(){;}
+                ThreadSem & operator=(ThreadSem const &);
+                void Wait(void);
+                void Signal(void);
+        };
+        
+    };
+};
 
 #endif

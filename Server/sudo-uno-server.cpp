@@ -19,13 +19,13 @@ int main() {
 
     // Instantiate the socket server
     // TODO: can we even change the bind if? do we need to?
-    SocketServer serveSock(bind_port);
+    network::SocketServer serveSock(bind_port);
     util::log('I', "Socket opened on port " + to_string(bind_port));
 
     // Loop indefinitely for each request
     while (true) {
         util::log('S', "Waiting for a player to connect...");
-        Socket clientSocket(serveSock.Accept());
+        network::Socket clientSocket(serveSock.Accept());
         util::log('S', "Connection established! Isolating...");
 
         // Always wrap connections into their own thread
