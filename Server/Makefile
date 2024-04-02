@@ -8,7 +8,7 @@ CXXFLAGS = -Wall -g
 TARGET = sudo-uno-server
 
 # Define object files
-OBJECTS = sudo-uno-server.o util/logger/logger.o util/network/blockable.o util/network/socket.o util/network/socketServer.o
+OBJECTS = sudo-uno-server.o util/logger/logger.o util/network/blockable.o util/network/socket.o util/network/socketServer.o thread/waiter.o
 
 # Rule to compile a CPP file to an object file
 .cpp.o:
