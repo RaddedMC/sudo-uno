@@ -1,5 +1,8 @@
 
-![sudo-uno Logo](logo.webp) <!-- Placeholder for logo -->
+<p align="center">
+    <img src="logo.webp" alt="sudo uno logo" width=500 height=500>
+</p>
+
 # sudo-uno: Terminal-based UNO Game Server
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](URL_TO_BUILD_STATUS) 
@@ -13,7 +16,7 @@ This application does **not** require root access.
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/sudo-uno.git
+git clone https://github.com/RaddedMC/sudo-uno.git
 ```
 2. Navigate to the project directory:
 ```bash
@@ -35,7 +38,7 @@ python3 client.py
 
 ## 🎥 Demo
 
-[![Watch the demo](path/to/demo_thumbnail.png)](URL_TO_VIDEO_DEMO) <!-- Placeholder for video demo thumbnail and link -->
+[![Watch the demo](path/to/demo_thumbnail.png)](https://www.youtube.com/watch?v=dQw4w9WgXcQ) <!-- Placeholder for video demo thumbnail and link -->
 
 ## ✨ Features
 
