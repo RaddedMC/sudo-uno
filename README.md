@@ -1,6 +1,8 @@
 
 <p align="center">
-    <img src="logo.webp" alt="sudo uno logo" width=400 height=400>
+    <a href="https://github.com/RaddedMC/sudo-uno">
+        <img src="logo.webp" alt="sudo uno logo" width=400 height=400>
+    </a>
 </p>
 
 # sudo-uno: Terminal-based UNO Game Server
