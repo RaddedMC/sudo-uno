@@ -15,7 +15,8 @@ namespace SudoUno {
     void util::log(char level, const string& msg) {
 
         // Get the current time for use in the log
-        time_t current_time = time(nullptr);
+        time_t current_time;
+        time(&current_time);
 
         // Localize it
         struct tm *local_time = localtime(&current_time);
