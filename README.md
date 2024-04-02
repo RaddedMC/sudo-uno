@@ -1,5 +1,5 @@
 
-![sudo-uno Logo](path/to/logo.png) <!-- Placeholder for logo -->
+![sudo-uno Logo](logo.webp) <!-- Placeholder for logo -->
 # sudo-uno: Terminal-based UNO Game Server
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](URL_TO_BUILD_STATUS) 
