@@ -1,6 +1,6 @@
 
 <p align="center">
-    <img src="logo.webp" alt="sudo uno logo" width=500 height=500>
+    <img src="logo.webp" alt="sudo uno logo" width=400 height=400>
 </p>
 
 # sudo-uno: Terminal-based UNO Game Server
