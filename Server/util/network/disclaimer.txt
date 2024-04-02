@@ -1,0 +1,5 @@
+Many of the networking features of this application were adapted from the below repository, used in SE 3313 at Western University
+
+-  https://github.com/uwoece-km/se3313-2017-Lab4
+
+These files are included as this application is the culminating project of the course.
