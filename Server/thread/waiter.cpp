@@ -1,28 +1,32 @@
 #include "sudoThreads.h"
 
+using namespace std;
+
 namespace SudoUno {
+
     namespace sudoThreads {
+
         void waiterThreadFunction(network::Socket sk) {
+            sk.Write("sudo-uno hello\nplease provide username\n");
 
-            string msgFull = "";
+            util::log('W', "Waiting for client to provide a username...");
+            string protomsg = proto::recieveProtoMessage(sk);
 
-            util::log('S', "Waiting for client to provide a username...");
-            while (true) {
-                // Read the next incoming message from the client
-                network::ByteArray msg;
-                sk.Read(msg);
+            // Verify we got a real username
+            // Message should contain 
+            // Lobby.request
+            // name = ""
 
-                string msgAsString = msg.ToString();
-                cout << msgAsString.compare("."); // TODO: debug
-                if (!msgAsString.compare(".")) {
-                    // We received a new line. Message over!
-                    util::log('S', "Message complete.");
-                    break;
-                }
-
-                msgFull.append(msgAsString);
-                util::log('S', "Message: \n" + msgFull);
+            if (misc::toLowerCase("") == "") {
+                
+            } else {
+                // Malformed message
+                util::log('W', "Their response was malformed. Dropping connection...");
+                sk.Write("malformed response :(");
+                sk.Close();
             }
         }
+
     }
+
 }

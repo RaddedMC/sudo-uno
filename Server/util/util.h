@@ -17,23 +17,29 @@
 
 using namespace std;
 
+// The SudoUno namespace will be used to maintain all of the additional functions and components of the server application.
 namespace SudoUno {
 
+    // The misc namespace is for miscellaneous utilities.
+    namespace misc {
+        string toLowerCase(string input);
+    }
+
+    // The util namespace will handle utilities, like loggers.
     namespace util {
         void ascii();
         void log(char level, const string& msg);
     }
 
+    // The network namespace will handle network functionalities like sockets.
     namespace network {
 
         typedef int TerminationException;
 
-        // TODO: needed?
         class ByteArray {
             public:
                 vector<char> v;
 
-                // TODO: needed?
                 string ToString(void) const
                 {
                     string returnValue;
@@ -107,6 +113,7 @@ namespace SudoUno {
 
                 int Open(void);
                 int Write(ByteArray const & buffer);
+                int Write(string const & input);
                 int Read(ByteArray & buffer);
                 void Close(void);
         };
@@ -146,6 +153,11 @@ namespace SudoUno {
         };
         
     };
+
+    // The proto namespace will handle functionalities that involve our custom TCP protocol.
+    namespace proto {
+        string recieveProtoMessage(network::Socket sk);
+    }
 };
 
 #endif

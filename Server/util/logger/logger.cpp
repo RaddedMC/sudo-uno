@@ -7,6 +7,7 @@ namespace SudoUno {
     // Recommended logging levels:
     // -- S: System Info
     // -- G: Game info
+    // -- W: Waiter info
     // -- !: Important
     // -- I: Initialization
 

@@ -62,6 +62,12 @@ namespace SudoUno {
             open = true;
         }
 
+        // Overload so we can directly write a string
+        int Socket::Write(string const & input)
+        {
+            return Write(ByteArray(input));
+        }
+
         int Socket::Write(ByteArray const & buffer)
         {
             if (!open)
