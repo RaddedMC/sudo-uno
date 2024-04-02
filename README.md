@@ -6,7 +6,7 @@
 [![License](https://img.shields.io/badge/license-MIT-blue)](URL_TO_LICENSE)
 [![Version](https://img.shields.io/badge/version-1.0.0-lightgrey)](URL_TO_PROJECT_VERSION)
 
-> Dive into the classic card game UNO like never before! sudo-uno brings the joy of UNO to your terminal, allowing you to play with friends or AI across a robust, multi-threaded server. No GUI? No problem. Experience UNO in a fresh, stylized terminal client.
+> Dive into the classic card game UNO like never before! sudo-uno brings the joy of UNO to your terminal, allowing you to play with friends across a robust, multi-threaded server. No GUI? No problem. Experience UNO in a fresh, stylized terminal client.
 
 ## 🎮 Quick Start
 This application does **not** require root access.
@@ -66,7 +66,7 @@ Explore the detailed documentation for an in-depth understanding of sudo-uno's a
 
 ## 🤝 Contributing
 
-Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+Contribution are what makes the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
 Please refer to our [Contribution Guidelines](CONTRIBUTING.md) for more information.
 
