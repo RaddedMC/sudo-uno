@@ -9,7 +9,7 @@ using namespace std;
 namespace SudoUno {
     namespace util {
         void ascii();
-        void logger(char level, const string& msg);
+        void log(char level, const string& msg);
     }
 }
 

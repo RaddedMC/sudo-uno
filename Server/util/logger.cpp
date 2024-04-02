@@ -3,7 +3,16 @@
 using namespace std;
 
 namespace SudoUno {
-    void util::logger(char level, const string& msg) {
+    
+    // Recommended logging levels:
+    // -- S: System Info
+    // -- G: Game info
+    // -- D: Debug
+    // -- W: Warning
+    // -- E: Error
+    // -- A: Assumption
+
+    void util::log(char level, const string& msg) {
 
         // Get the current time for use in the log
         time_t current_time = time(nullptr);
