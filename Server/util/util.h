@@ -22,7 +22,7 @@ namespace SudoUno {
 
     // The misc namespace is for miscellaneous utilities.
     namespace misc {
-        string toLowerCase(string input);
+        // TODO: remove?
     }
 
     // The util namespace will handle utilities, like loggers.

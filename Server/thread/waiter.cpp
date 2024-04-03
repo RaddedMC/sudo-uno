@@ -1,4 +1,6 @@
 #include "sudoThreads.h"
+#include <algorithm>
+#include <string>
 
 using namespace std;
 
@@ -16,12 +18,14 @@ namespace SudoUno {
             // Message should contain 
             // Lobby.request
             // name = ""
-            string lowercase = misc::toLowerCase(protomsg);
+            string lowercase = protomsg;
+            transform(lowercase.begin(), lowercase.end(), lowercase.begin(), ::tolower);
+            cout << lowercase;
             if (lowercase.find("lobby.request") != string::npos) {
                 // Now we need to check for the name line
                 util::log('W', "They requested a lobby"); // TODO: debug
-                // regex str_expr("^name = \"([a-zA-Z0-9]+)\"$");
-                // util::log('W', "We made a regex"); // TODO: debug
+                regex str_expr("^name = \"([a-zA-Z0-9]+)\"$");
+                util::log('W', "We made a regex"); // TODO: debug
                 // bool isMatch = regex_match(lowercase, str_expr);
                 // util::log('W', "We matched a regex"); // TODO: debug
                 // cout << isMatch << endl;
