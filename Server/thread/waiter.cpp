@@ -16,13 +16,19 @@ namespace SudoUno {
             // Message should contain 
             // Lobby.request
             // name = ""
-
-            if (misc::toLowerCase("") == "") {
-                
+            string lowercase = misc::toLowerCase(protomsg);
+            if (lowercase.find("lobby.request") != string::npos) {
+                // Now we need to check for the name line
+                util::log('W', "They requested a lobby"); // TODO: debug
+                // regex str_expr("^name = \"([a-zA-Z0-9]+)\"$");
+                // util::log('W', "We made a regex"); // TODO: debug
+                // bool isMatch = regex_match(lowercase, str_expr);
+                // util::log('W', "We matched a regex"); // TODO: debug
+                // cout << isMatch << endl;
             } else {
                 // Malformed message
                 util::log('W', "Their response was malformed. Dropping connection...");
-                sk.Write("malformed response :(");
+                sk.Write("malformed response :(\n");
                 sk.Close();
             }
         }

@@ -2,7 +2,7 @@
 namespace SudoUno {
 
     namespace proto {
-        
+
         string recieveProtoMessage(network::Socket sk) {
 
             string msgFull = "";
@@ -18,7 +18,7 @@ namespace SudoUno {
                 
                 // If the user inputs a dot on an empty line, the message has ended
                 if (msgFull.find(".fin") != string::npos) {
-                    util::log('S', "Message: \n" + msgFull + "End of message");
+                    util::log('S', "Message: \n" + msgFull);
                     break;
                 }
             }

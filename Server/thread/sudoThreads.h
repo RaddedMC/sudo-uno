@@ -1,4 +1,8 @@
+#ifndef SUDOTHREADS_H
+#define SUDOTHREADS_H
+
 #include "../util/util.h"
+#include <regex>
 
 using namespace std;
 
@@ -7,3 +11,5 @@ namespace SudoUno {
         void waiterThreadFunction(network::Socket sk);
     }
 }
+
+#endif
