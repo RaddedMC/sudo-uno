@@ -6,12 +6,15 @@ using namespace SudoUno;
 using namespace std;
 
 // As i've done for all the labs, a vector to hold the threads to keep them referenced until shutdown
-vector <thread> threads;
+vector <thread> waiterThreads;
+
+// Create a semaphore to ensure that players are added to games in a single-file fashion
+proc::Semaphore canJoin("canJoin", 1, true);
 
 // Spawns a waiter thread to wait for the player to enter a username
 void spawnWaiterThread(network::Socket sk) {
-    thread tr(sudoThreads::waiterThreadFunction, sk);
-    threads.push_back(move(tr));
+    thread tr(sudoThreads::waiterThreadFunction, sk, canJoin);
+    waiterThreads.push_back(std::move(tr));
 }
 
 int main() {

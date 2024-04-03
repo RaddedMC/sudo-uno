@@ -1,0 +1,5 @@
+The semaphore functionality of this application was adapted from the below repository, used in SE 3313 at Western University
+
+-  https://github.com/kgrolinger/se3313-2020-lab2
+
+These files are included as this application is the culminating project of the course.

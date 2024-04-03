@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
-      "cwd": "/home/radded/dev/sudo-uno",
-      "program": "/home/radded/dev/sudo-uno/build/Debug/outDebug",
+      "cwd": "/home/radded/dev/sudo-uno/Server",
+      "program": "/home/radded/dev/sudo-uno/Server/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

@@ -17,6 +17,7 @@
 #include <algorithm>
 #include <random>
 #include <regex>
+#include "proc/Semaphore.h"
 
 using namespace std;
 
