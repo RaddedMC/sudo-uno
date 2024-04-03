@@ -1,13 +1,14 @@
 #include "sudoThreads.h"
 
-#include <unistd.h>
-
 namespace SudoUno {
 
     namespace sudoThreads {
 
+        // Create a semaphore to ensure that players are added to games in a single-file fashion
+        proc::Semaphore canJoin("canJoin", 1);
+
         // Adds a player to a game.
-        void addPlayerToGame(network::Socket sk, proc::Semaphore canJoin, string name) {
+        void addPlayerToGame(network::Socket sk, string name) {
             // First, we need to wait on the semaphore.
             util::log('W', "Waiting for canJoin semaphore...");
             canJoin.Wait();
@@ -16,7 +17,7 @@ namespace SudoUno {
             util::log('W', "We have the canJoin semaphore!");
 
             // TODO: Add the player to the game
-            sleep(1000);
+            sleep(1);
 
             util::log('W', "Player has been added to game. Releasing semaphore and cleaning up thread...");
             canJoin.Signal();
@@ -25,7 +26,7 @@ namespace SudoUno {
         // Waiter thread main.
         // Thread count = 1 per client
         // Waits for the client to request a lobby and provide a username
-        void waiterThreadFunction(network::Socket sk, proc::Semaphore canJoin) {
+        void waiterThreadFunction(network::Socket sk) {
             // Greet the client
             sk.Write("sudo-uno hello\nplease provide username\n");
 
@@ -64,6 +65,7 @@ namespace SudoUno {
                     sk.Write("lobby.request.approved\n\tname=\"" + name + "\"\n\tplayers=\n.fin\n");
 
                     // We now need to add the player to the game!
+                    addPlayerToGame(sk, name);
                 } else {
                     proto::malformedRequest(sk);
                 }

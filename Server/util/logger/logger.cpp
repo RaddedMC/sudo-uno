@@ -11,6 +11,8 @@ namespace SudoUno {
     // -- !: Important
     // -- I: Initialization
 
+    // TODO: give threads the ability to log with unique identifiers
+    // TODO: 
     void util::log(char level, const string& msg) {
 
         // Get the current time for use in the log

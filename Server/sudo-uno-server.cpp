@@ -13,7 +13,7 @@ proc::Semaphore canJoin("canJoin", 1, true);
 
 // Spawns a waiter thread to wait for the player to enter a username
 void spawnWaiterThread(network::Socket sk) {
-    thread tr(sudoThreads::waiterThreadFunction, sk, canJoin);
+    thread tr(sudoThreads::waiterThreadFunction, sk);
     waiterThreads.push_back(std::move(tr));
 }
 
