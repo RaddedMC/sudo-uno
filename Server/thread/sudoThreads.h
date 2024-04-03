@@ -2,7 +2,6 @@
 #define SUDOTHREADS_H
 
 #include "../util/util.h"
-#include <regex>
 
 using namespace std;
 

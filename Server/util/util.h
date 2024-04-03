@@ -14,6 +14,9 @@
 #include <stdarg.h>
 #include <sys/time.h>
 #include <sys/select.h>
+#include <algorithm>
+#include <random>
+#include <regex>
 
 using namespace std;
 
@@ -157,6 +160,8 @@ namespace SudoUno {
     // The proto namespace will handle functionalities that involve our custom TCP protocol.
     namespace proto {
         string recieveProtoMessage(network::Socket sk);
+        void malformedRequest(network::Socket sk);
+        string retrieveOneLineItem(string key, string msg);
     }
 };
 

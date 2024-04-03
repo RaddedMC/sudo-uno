@@ -1,32 +1,10 @@
 #include "sudoThreads.h"
-#include <algorithm>
-#include <string>
-#include <random>
 
 using namespace std;
 
 namespace SudoUno {
 
     namespace sudoThreads {
-
-        // Runs when a malformed request is sent. Disconnects the client and logs
-        void malformedRequest(network::Socket sk) {
-                util::log('S', "Their response was malformed. Dropping connection...");
-                sk.Write("malformed response :(\n");
-                sk.Close();
-        }
-
-        // Retrieves a one-line encoded data item from a message on the protocol
-        string retrieveOneLineItem(string key, string msg) {
-            regex str_expr("[^]+name[ ]*=[ ]*\"([a-zA-Z0-9 ]+)\"[^]+");
-            smatch requestedItem;
-            bool isMatch = regex_search(msg, requestedItem, str_expr);
-            if (isMatch) {
-                return requestedItem[1];
-            } else {
-                return "";
-            }
-        }
 
         // Waiter thread main.
         // Thread count = 1 per client
@@ -48,7 +26,7 @@ namespace SudoUno {
             transform(lowercase.begin(), lowercase.end(), lowercase.begin(), ::tolower);
             if (lowercase.find("lobby.request") != string::npos) {
                 // Now we need to check for the name line
-                string name = retrieveOneLineItem("name", protomsg);
+                string name = proto::retrieveOneLineItem("name", protomsg);
                 if (name.compare("")) {
                     // What is their name?
                     util::log('W', "They provided username '" + name + "'");
@@ -69,11 +47,11 @@ namespace SudoUno {
 
                     sk.Write("lobby.request.approved\n\tname=\"" + name + "\"\n\tplayers=\n.fin\n");
                 } else {
-                    malformedRequest(sk);
+                    proto::malformedRequest(sk);
                 }
             } else {
                 // Malformed message
-                malformedRequest(sk);
+                proto::malformedRequest(sk);
             }
         }
 
