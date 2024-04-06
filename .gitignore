@@ -1,3 +1,4 @@
 *.o
 sudo-uno-server
 sudo-uno
+__pycache__/
