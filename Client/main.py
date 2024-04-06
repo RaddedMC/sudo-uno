@@ -8,7 +8,11 @@ from utils.logger import (
     printTopcard,
     printTurn,
     printOptions,
-    handlePlayerChoice
+    handlePlayerChoice,
+    handleGetName,
+    waitingForLobby,
+    handleJoinedGame,
+    handerGameInit,
 )
 import os
 
@@ -26,8 +30,21 @@ players_map = {
 
 client_hand = ["Blue|Rev", "Red|Skip", "Green|PL2", "Black|Wild", "Black|Wild4", "Red|9"]
 current_card = "Yellow|9"
-turn = "Player 1"
-client_name = "Player 1"
+turn = "Player1"
+
+
+handerGameInit()
+
+client_name = handleGetName()
+
+#Lobby
+while True:
+    clear_terminal()
+    waitingForLobby()
+    # Check if the game has started
+    if True:
+        handleJoinedGame()
+        break
 
 
 # Game loop
