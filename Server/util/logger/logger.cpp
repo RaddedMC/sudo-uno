@@ -1,4 +1,4 @@
-#include "util.h"
+#include "../util.h"
 
 using namespace std;
 
@@ -7,9 +7,12 @@ namespace SudoUno {
     // Recommended logging levels:
     // -- S: System Info
     // -- G: Game info
+    // -- W: Waiter info
     // -- !: Important
     // -- I: Initialization
 
+    // TODO: give threads the ability to log with unique identifiers
+    // TODO: 
     void util::log(char level, const string& msg) {
 
         // Get the current time for use in the log

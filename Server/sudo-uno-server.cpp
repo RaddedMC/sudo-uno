@@ -1,15 +1,24 @@
 #include "util/util.h"
+#include "thread/sudoThreads.h"
 #include <thread>
 
 using namespace SudoUno;
 using namespace std;
 
 // As i've done for all the labs, a vector to hold the threads to keep them referenced until shutdown
-vector <thread> threads;
+vector <thread> waiterThreads;
+
+// Create a semaphore to ensure that players are added to games in a single-file fashion
+proc::Semaphore canJoin("canJoin", 1, true);
+
+// Spawns a waiter thread to wait for the player to enter a username
+void spawnWaiterThread(network::Socket sk) {
+    thread tr(sudoThreads::waiterThreadFunction, sk);
+    waiterThreads.push_back(std::move(tr));
+}
 
 int main() {
     util::log('I', "init sudo-uno-server");
-    util::ascii();
 
     // TODO: Command-line args to set port number and interface bind
     const string bind_if = "0.0.0.0";
@@ -19,15 +28,23 @@ int main() {
 
     // Instantiate the socket server
     // TODO: can we even change the bind if? do we need to?
-    SocketServer serveSock(bind_port);
-    util::log('I', "Socket opened on port " + to_string(bind_port));
+    try {
+        network::SocketServer serveSock(6969);
 
-    // Loop indefinitely for each request
-    while (true) {
-        util::log('S', "Waiting for a player to connect...");
-        Socket clientSocket(serveSock.Accept());
-        util::log('S', "Connection established! Isolating...");
+        util::log('I', "Socket opened on port " + to_string(bind_port));
+        util::ascii();
 
-        // Always wrap connections into their own thread
+        // Loop indefinitely for each request
+        while (true) {
+            util::log('S', "Waiting for a player to connect...");
+            network::Socket clientSocket(serveSock.Accept());
+            util::log('S', "Connection established! Isolating...");
+
+            // Always wrap connections into their own thread
+            spawnWaiterThread(clientSocket);
+        }
+    } catch (string e) {
+        util::log('E', "That port is currently bound to another process.");
+        exit(1);
     }
 }
