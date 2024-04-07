@@ -50,7 +50,7 @@ def printOptions(options):
     for i, option in enumerate(options, start=1):
         print(f"{i}. {option}")
         
-def handlePlayerChoice(choice, hand, client_name):
+def handlePlayerChoice1(choice, hand, client_name):
     if choice == "1":
         printHand2(hand)
         card_index = int(input("Enter the number corresponding to the card you want to play: "))

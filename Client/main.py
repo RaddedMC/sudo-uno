@@ -8,7 +8,7 @@ from utils.logger import (
     printTopcard,
     printTurn,
     printOptions,
-    handlePlayerChoice,
+    handlePlayerChoice1,
     handleGetName,
     waitingForLobby,
     handleJoinedGame,
@@ -41,6 +41,7 @@ client_name = handleGetName()
 while True:
     clear_terminal()
     waitingForLobby()
+    time.sleep(3)
     # Check if the game has started
     if True:
         handleJoinedGame()
@@ -60,14 +61,29 @@ while True:
         printTopcard(current_card)
         printTurn(turn, True)
         printOptions(["Play a card", "Draw a card", "Call UNO"])
-        player_choice = input("Enter your choice: ")
+        while True:
+            player_choice = input("Enter your choice: ")
+            # Process player choice
+            if player_choice == "1":
+                handlePlayerChoice1(player_choice, client_hand, client_name)
+                # Clear terminal after player plays a card
+                time.sleep(10)
+                clear_terminal()
+                
+            # Process player choice draw a card
+            if player_choice == "2":
+                # Clear terminal after player plays a card
+                #handlePlayerChoice2(player_choice, client_hand, client_name)
+                time.sleep(10)
+                clear_terminal()
+        
 
-        handlePlayerChoice(player_choice, client_hand, client_name)
-        # Process player choice
-        if player_choice == "1":
-            # Clear terminal after player plays a card
-            time.sleep(10)
-            clear_terminal()
+            # Process player choice and check if they have only one card left
+            if player_choice == "3":
+                # Clear terminal after player plays a card
+                #handlePlayerChoice3(player_choice, client_hand, client_name)
+                time.sleep(10)
+                clear_terminal()
         
 
 
