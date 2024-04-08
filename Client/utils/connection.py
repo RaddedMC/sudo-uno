@@ -9,9 +9,8 @@ class Connection:
         self.receive()
 
     def send(self, data):
-        self.connection.write((data).encode("ascii"))
-        self.connection.write(("\n").encode("ascii"))
-        self.connection.write((".fin").encode("ascii"))
+        self.connection.write(("Lobby.request").encode("ascii") + b"\n")
+        self.connection.write((data).encode("ascii") + b"\n.fin")
         self.receive()
 
     def receive(self):

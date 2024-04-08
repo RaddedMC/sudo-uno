@@ -103,6 +103,7 @@ if __name__ == "__main__":
     # print welcome message from server
 
     client_name = handleGetName()
+    client_name = 'name = "' + client_name + '"'
     connection.send(client_name)
 
     # lobby_loop()
