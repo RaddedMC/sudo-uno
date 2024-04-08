@@ -10,15 +10,12 @@ namespace SudoUno {
 
         // Create a semaphore that belongs to this thread. This will be used to pin this thread open so that the reference to the gameThread stays available.
         // This way, this current thread remains in memory but is not wasting CPU cycles.
-        proc::Semaphore keepThisThreadOpen("keepOpen", 0, true);
-        thread *gameThread;
+        vector <thread> gameThreadVec;
 
         // Spawn a game thread
         void spawnGameThread(game::Game game) {
-            cout << "Spawning game thread";
-            *gameThread = thread(sudoThreads::gameThreadFunction, game);
-            cout << "Thread spawned";
-            keepThisThreadOpen.Wait();
+            thread tr(sudoThreads::gameThreadFunction, game);
+            gameThreadVec.push_back(std::move(tr));
         }
 
         // Adds a player to a game.
@@ -45,10 +42,9 @@ namespace SudoUno {
                 if (topGame.getNumPlayers() == 4) {
                     util::log('W', "The topmost game is full!");
                     // YES, we need to start a new lobby
-                    game::Game newGame = game::Game(game::Player(name, sk));
                     // No need to tell the player that they've entered the game since there is only one player.
                     // But we DO need to create the thread
-                    spawnGameThread(newGame);
+                    spawnGameThread(game::Game(game::Player(name, sk)));
                 } else {
                     util::log('W', "The topmost game still has room!");
                     // NO, we can add to the current lobby

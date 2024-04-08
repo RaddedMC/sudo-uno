@@ -102,10 +102,10 @@ namespace SudoUno {
         class Game {
             private:
                 Player currentPlayer;
-                vector<Player> players;
                 vector<card::Card> cards;
                 GameState state;
             public:
+                vector<Player> players;
                 Game(Player p);
                 Player getCurrentPlayer() {return currentPlayer;};
                 void addPlayer(Player p) {
