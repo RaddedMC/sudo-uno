@@ -77,6 +77,11 @@ namespace SudoUno {
                     return name;
                 };
 
+                // Retrieves the player's socket
+                network::Socket getSocket() {
+                    return sk;
+                };
+
                 // Adds a card to the player's card hand.
                 void addCard(card::Card c) {
                     hand.push_back(c);

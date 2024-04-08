@@ -70,8 +70,31 @@ namespace SudoUno {
             // TODO: implement me!
         }
 
+        //Reason is either the name of the player that won or "error"
         void Game::End(string reason) {
             // TODO: implement me!
+
+            //End the game by disconnecting all players in session then closing the server thread
+            for (int i = 0; i < this->players.size(); i++) {
+                if(this->players[i].getName() == reason) {
+                    //Send a message to the player
+                    this->players[i].sendToSocket("Game Over: You won!");
+                } else if(reason != "error"){
+                    //Send a message to the player
+                    this->players[i].sendToSocket("Game over: " + reason + " won!");
+                } else {
+                    //Send a message to the player
+                    this->players[i].sendToSocket("Game over: An error occurred.");
+                }
+
+                //Close the player's socket
+                this->players[i].getSocket().Close();
+            }
+
+            //Change game state to finished
+            this->state = GameState::finished;
+
+            //Add additional code to close the server thread if done here
         }
 
         void Game::TakeTurn(Player p, card::Card c, bool saidSudo, bool pickUp) {
