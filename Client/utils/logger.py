@@ -12,6 +12,99 @@ color_codes = {
     "Black": Fore.WHITE + Back.BLACK  # White text on black background for Black cards
 }
 
+type_char_map = {
+    "0": "0",
+    "1": "1",
+    "2": "2",
+    "3": "3",
+    "4": "4",
+    "5": "5",
+    "6": "6",
+    "7": "7",
+    "8": "8",
+    "9": "9",
+    "Rev": "R",
+    "Skip": "S",
+    "PL2": "+2",
+    "Wild": "W",
+    "Wild4": "+4"
+}
+
+def print_card_type(card_type):
+    type_map = {
+        "0": r"""
+  /▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔\
+ | 0.------------.  |
+ |  :    ____    :  |
+ |  :  .'    '.  :  |
+ |  : |  .--.  | :  |
+ |  : | |    | | :  |
+ |  : |  `--'  | :  |
+ |  :  '.____.'  :  |
+ |  :            :  |
+ |  '------------'0 |
+  \_________________/
+""",
+        "1": r"""
+
+""",
+        "2": r"""
+
+""",
+        "3": r"""
+
+""",
+        "4": r"""
+ _  _  
+| || | 
+| || |_
+|__   _|
+   |_|
+""",
+        "5": r"""
+ _____ 
+| ____|
+| |__  
+|___ \ 
+ ___) |
+|____/ 
+""",
+        "6": r"""
+
+""",
+        "7": r"""
+
+""",
+        "8": r"""
+
+""",
+        "9": r"""
+
+""",
+        "Rev": r"""
+
+""",
+        "Skip": r"""
+
+""",
+        "PL2": r"""
+
+""",
+        "Wild": r"""
+
+""",
+        "Wild4": r"""
+
+"""
+    }
+
+    if card_type in type_map:
+        print(type_map[card_type].replace('#', '\n'))
+    else:
+        print(f"Invalid card type: {card_type}")
+        
+
+
 def printHand(hand):
     """Prints the player's hand of cards."""
     hand_str = " ".join([f"{color_codes.get(color, Fore.RESET)}{color}|{type}{Style.RESET_ALL}" for color, type in [card.split("|") for card in hand]])
@@ -81,12 +174,21 @@ def handerGameInit():
     print(f"{Fore.RED}{Style.BRIGHT} .----------------.  .----------------.  .----------------.  .----------------. \n| .--------------. || .--------------. || .--------------. || .--------------. |\n| |    _______   | || | _____  _____ | || |  ________    | || |     ____     | |\n| |   /  ___  |  | || ||_   _||_   _|| || | |_   ___ `.  | || |   .'    `.   | |\n| |  |  (__ \\_|  | || |  | |    | |  | || |   | |   `. \\ | || |  /  .--.  \\  | |\n| |   '.___`-.   | || |  | '    ' |  | || |   | |    | | | || |  | |    | |  | |\n| |  |`\\____) |  | || |   \\ `--' /   | || |  _| |___.' / | || |  \\  `--'  /  | |\n| |  |_______.'  | || |    `.__.'    | || | |________.'  | || |   `.____.'   | |\n| |              | || |              | || |              | || |              | |\n| '--------------' || '--------------' || '--------------' || '--------------' |\n '----------------'  '----------------'  '----------------'  '----------------' \n\n                                     ______                                     \n                                    |______|                                    \n\n           .----------------.  .-----------------. .----------------.           \n          | .--------------. || .--------------. || .--------------. |          \n          | | _____  _____ | || | ____  _____  | || |     ____     | |          \n          | ||_   _||_   _|| || ||_   \\|_   _| | || |   .'    `.   | |          \n          | |  | |    | |  | || |  |   \\ | |   | || |  /  .--.  \\  | |          \n          | |  | '    ' |  | || |  | |\\ \\| |   | || |  | |    | |  | |          \n          | |   \\ `--' /   | || | _| |_\\   |_  | || |  \\  `--'  /  | |          \n          | |    `.__.'    | || ||_____|\\____| | || |   `.____.'   | |          \n          | |              | || |              | || |              | |          \n          | '--------------' || '--------------' || '--------------' |          \n           '----------------'  '----------------'  '----------------'           {Style.RESET_ALL}")
     #Add game rules
     print(f"{Fore.YELLOW}{Style.BRIGHT}Game Rules:{Style.RESET_ALL}")
+    print_card_type("0")
     pass
     
 
 def handleGetName():
     print(f"{Fore.WHITE}{Style.BRIGHT}Enter your username to get started:{Style.RESET_ALL}")
     return input("")
+
+def handleGetServer():
+    print(f"{Fore.WHITE}{Style.BRIGHT}Enter the server IP address:{Style.RESET_ALL}")
+    ip = input("")
+    print(f"{Fore.WHITE}{Style.BRIGHT}Enter the server port number:{Style.RESET_ALL}")
+    port = input("")
+
+    return ip, port
 
 def waitingForLobby():
     print(f"{Fore.YELLOW}{Style.BRIGHT}Waiting for other players...{Style.RESET_ALL}")

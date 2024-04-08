@@ -21,13 +21,7 @@ namespace SudoUno {
                 black
             };
 
-            map<CardColor, string> ColorNames = {
-                {red, "Red"},
-                {green, "Green"},
-                {blue, "Blue"},
-                {yellow, "Yellow"},
-                {black, "Black"}
-            };
+            extern map<CardColor, string> ColorNames;
 
             enum CardType {
                 zero,
@@ -47,23 +41,7 @@ namespace SudoUno {
                 wild
             };
 
-            map<CardType, string> TypeNames = {
-                {zero, "0"},
-                {one, "1"},
-                {two, "2"},
-                {three, "3"},
-                {four, "4"},
-                {five, "5"},
-                {six, "6"},
-                {seven, "7"},
-                {eight, "8"},
-                {nine, "9"},
-                {rev, "Rev"},
-                {skip, "Skip"},
-                {pltwo, "PL2"},
-                {wild4, "Wild4"},
-                {wild, "Wild"}
-            };
+            extern map<CardType, string> TypeNames;
 
             class Card {
                 private:
@@ -119,11 +97,7 @@ namespace SudoUno {
             finished
         };
 
-        map <GameState, string> GameStateNames = {
-            {playing, "Playing"},
-            {waiting, "Waiting"},
-            {finished, "Finished"}
-        };
+        extern map <GameState, string> GameStateNames;
 
         class Game {
             private:
@@ -132,6 +106,7 @@ namespace SudoUno {
                 vector<card::Card> cards;
                 GameState state;
             public:
+                Game(Player p);
                 Player getCurrentPlayer() {return currentPlayer;};
                 void addPlayer(Player p) {
                     players.push_back(p);
@@ -142,6 +117,7 @@ namespace SudoUno {
                 void Start();
                 void End(string reason);
                 void TakeTurn(Player p, card::Card c, bool saidSudo, bool pickUp);
+                int getNumPlayers() {return players.size();}
         };
     };
 }
