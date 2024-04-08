@@ -182,6 +182,14 @@ def handleGetName():
     print(f"{Fore.WHITE}{Style.BRIGHT}Enter your username to get started:{Style.RESET_ALL}")
     return input("")
 
+def handleGetServer():
+    print(f"{Fore.WHITE}{Style.BRIGHT}Enter the server IP address:{Style.RESET_ALL}")
+    ip = input("")
+    print(f"{Fore.WHITE}{Style.BRIGHT}Enter the server port number:{Style.RESET_ALL}")
+    port = input("")
+
+    return ip, port
+
 def waitingForLobby():
     print(f"{Fore.YELLOW}{Style.BRIGHT}Waiting for other players...{Style.RESET_ALL}")
 
