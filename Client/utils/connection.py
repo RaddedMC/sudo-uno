@@ -8,10 +8,11 @@ class Connection:
         self.connection = telnetlib.Telnet(self.host, self.port)
         self.receive()
 
-    def send(self, data):
-        self.connection.write((data).encode("ascii"))
-        self.connection.write(("\n").encode("ascii"))
-        self.connection.write((".fin").encode("ascii"))
+    def send(self, protocol):
+        for data in protocol:
+            self.connection.write(data.encode("ascii"))
+
+        self.connection.write(b"\n.fin")
         self.receive()
 
     def receive(self):

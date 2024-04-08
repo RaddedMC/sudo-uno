@@ -98,12 +98,20 @@ def game_loop(turn, client_name, players_map, client_hand, current_card):
 if __name__ == "__main__":
     handerGameInit()
 
-    ip, port = handleGetServer()
-    connection = Connection(ip, port)
+    # ip, port = handleGetServer()
+    connection = Connection("127.0.0.1", "6969")
     # print welcome message from server
 
     client_name = handleGetName()
-    connection.send(client_name)
+    client_name = 'name = "' + client_name + '"'
+
+    protocol = []
+    protocol.append("Lobby.request\n")
+    protocol.append(client_name)
+
+    print(protocol)
+
+    connection.send(protocol)
 
     # lobby_loop()
     # game_loop(turn, client_name, players_map, client_hand, current_card)
