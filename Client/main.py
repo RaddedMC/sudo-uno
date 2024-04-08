@@ -8,7 +8,7 @@ from utils.logger import (
     printTopcard,
     printTurn,
     printOptions,
-    handlePlayerChoice1,
+    handlePlayerChoice,
     handleGetName,
     waitingForLobby,
     handleJoinedGame,
