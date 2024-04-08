@@ -8,8 +8,8 @@ using namespace std;
 
 namespace SudoUno {
     namespace sudoThreads {
-        void waiterThreadFunction(network::Socket sk, vector<game::Game> games);
-        void gameThreadFunction(game::Game g);
+        void waiterThreadFunction(network::Socket sk);
+        void gameThreadFunction(int gameThreadIndex);
     }
 }
 

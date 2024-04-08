@@ -38,7 +38,7 @@ namespace SudoUno {
         };
 
         Game::Game(Player p) : currentPlayer(p), state(GameState::waiting) {
-            // TODO: do we need anything to implement here?
+            addPlayer(p);
         }
 
         void Game::dealCards(Player p) {

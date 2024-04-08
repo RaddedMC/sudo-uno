@@ -1,4 +1,5 @@
 #include "sudoThreads.h"
+#include "../game/game.h"
 #include <thread>
 
 namespace SudoUno {
@@ -13,13 +14,13 @@ namespace SudoUno {
         vector <thread> gameThreadVec;
 
         // Spawn a game thread
-        void spawnGameThread(game::Game game) {
-            thread tr(sudoThreads::gameThreadFunction, game);
+        void spawnGameThread(int gameVecIndex) {
+            thread tr(sudoThreads::gameThreadFunction, gameVecIndex);
             gameThreadVec.push_back(std::move(tr));
         }
 
         // Adds a player to a game.
-        void addPlayerToGame(network::Socket sk, string name, vector<game::Game> games) {
+        void addPlayerToGame(network::Socket sk, string name) {
             // First, we need to wait on the semaphore.
             util::log('W', "Waiting for canJoin semaphore...");
             canJoin.Wait();
@@ -28,27 +29,27 @@ namespace SudoUno {
             util::log('W', "We have the canJoin semaphore!");
 
             // If there are no games,
-            if (games.size() == 0) {
+            if (game::gamesVect.size() == 0) {
                 util::log('I', "Initialized first game");
                 // Start by initialzing first game
-                games.push_back(game::Game(game::Player(name, sk)));
+                game::gamesVect.push_back(game::Game(game::Player(name, sk)));
                 // And its thread
-                spawnGameThread(games.back());
+                spawnGameThread(0); // Since this is the first game we know it's index 0
             } else {
                 // We need to retrieve the topmost game from the games vector
-                game::Game topGame = games.back();
+                game::Game* topGame = &game::gamesVect.back();
 
                 // Is this game full?
-                if (topGame.getNumPlayers() == 4) {
+                if (topGame->getNumPlayers() == 4) {
                     util::log('W', "The topmost game is full!");
                     // YES, we need to start a new lobby
                     // No need to tell the player that they've entered the game since there is only one player.
                     // But we DO need to create the thread
-                    spawnGameThread(game::Game(game::Player(name, sk)));
+                    spawnGameThread(game::gamesVect.size()-1);
                 } else {
                     util::log('W', "The topmost game still has room!");
                     // NO, we can add to the current lobby
-                    topGame.addPlayer(game::Player(name, sk));
+                    topGame->addPlayer(game::Player(name, sk));
                 }
             }
             
@@ -59,7 +60,7 @@ namespace SudoUno {
         // Waiter thread main.
         // Thread count = 1 per client
         // Waits for the client to request a lobby and provide a username
-        void waiterThreadFunction(network::Socket sk, vector<game::Game> games) {
+        void waiterThreadFunction(network::Socket sk) {
             // Greet the client
             sk.Write("sudo-uno hello\nplease provide username\n");
 
@@ -98,7 +99,7 @@ namespace SudoUno {
                     sk.Write("lobby.request.approved\n\tname=\"" + name + "\"\n\tplayers=\n.fin\n");
 
                     // We now need to add the player to the game!
-                    addPlayerToGame(sk, name, games);
+                    addPlayerToGame(sk, name);
                 } else {
                     proto::malformedRequest(sk);
                 }

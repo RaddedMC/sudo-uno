@@ -8,14 +8,14 @@ using namespace std;
 
 // As i've done for all the labs, a vector to hold the threads to keep them referenced until shutdown
 vector <thread> waiterThreads;
-vector <game::Game> games;
+vector <game::Game> game::gamesVect;
 
 // Create a semaphore to ensure that players are added to games in a single-file fashion
 proc::Semaphore canJoin("canJoin", 1, true);
 
 // Spawns a waiter thread to wait for the player to enter a username
-void spawnWaiterThread(network::Socket sk, vector<game::Game> games) {
-    thread tr(sudoThreads::waiterThreadFunction, sk, games);
+void spawnWaiterThread(network::Socket sk) {
+    thread tr(sudoThreads::waiterThreadFunction, sk);
     waiterThreads.push_back(std::move(tr));
 }
 
@@ -43,7 +43,7 @@ int main() {
             util::log('S', "Connection established! Isolating...");
 
             // Always wrap connections into their own thread
-            spawnWaiterThread(clientSocket, games);
+            spawnWaiterThread(clientSocket);
         }
     } catch (string e) {
         util::log('E', "That port is currently bound to another process.");
