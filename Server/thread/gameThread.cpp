@@ -5,7 +5,7 @@
 namespace SudoUno {
     namespace sudoThreads {
 
-        void updateGameState(game::Game* myGame) {
+        void updateGameState(game::Game* myGame, int gameIndex) {
             // Tell each player what's up
             
             // To send to everyone:
@@ -17,6 +17,57 @@ namespace SudoUno {
             //          "playerthree|6"
             //          "playerfour|6"
             //     current_card = "Red|5"
+            string publicInfo = "game.state.update\n";
+            util::log(gameIndex, "Status update:");
+            
+            // Add player name
+            publicInfo += "\tturn = \"" + myGame->getCurrentPlayer().getName() + "\"\n";
+            util::log(gameIndex, "It is " + myGame->getCurrentPlayer().getName() + "'s turn.");
+
+            // Get player card counts
+            publicInfo += "\tplayers = \n";
+            for (int i = 0; i < myGame->getNumPlayers(); i++) {
+                publicInfo += "\t\t\"" + myGame->players[i].getName() + "|" + to_string(myGame->players[i].getHand().size()) + "\"\n";
+                
+                string cardLogString = myGame->players[i].getName() + "Has cards:\n";
+                for (int cardIndex = 0; cardIndex < myGame->players[i].getHand().size(); cardIndex++) {
+                    cardLogString += "\t" + myGame->players[i].getHand()[cardIndex].getCardEncoding() + "\n";
+                }
+                util::log(gameIndex, cardLogString);
+            }
+
+            // Get current card
+            publicInfo += "\tcurrent_card = \"" + myGame->getCurrentCard().getCardEncoding() + "\"\n";
+            util::log(gameIndex, "The current card is " + myGame->getCurrentCard().getCardEncoding());
+
+            // Your cards prefix
+            publicInfo += "\tyour_cards =\n";
+
+            // To send to a specific player:
+
+            //     your_cards =
+            //         "Red|5"
+            //         "Green|6"
+            //         "Yellow|Swap"
+            //         ...
+            // Your turn
+            // .fin
+
+            for (int playerIndex = 0; playerIndex < myGame->getNumPlayers(); playerIndex++) {
+                game::Player workingPlayer = myGame->players[playerIndex];
+                string privateInfo = publicInfo;
+                for (int cardIndex = 0; cardIndex < workingPlayer.getHand().size(); cardIndex++) {
+                    privateInfo += "\t\t\"" + workingPlayer.getHand()[cardIndex].getCardEncoding() + "\"\n";
+                }
+                if (!workingPlayer.getName().compare(myGame->getCurrentPlayer().getName())) {
+                    privateInfo += "Your turn\n";
+                }
+                privateInfo += ".fin\n";
+                workingPlayer.sendToSocket(privateInfo);
+                util::log(gameIndex, "Notified player " + workingPlayer.getName());
+            }
+
+            util::log(gameIndex, "Game status update complete");
         }
 
         void gameThreadFunction(int gameThreadIndex) {
@@ -113,10 +164,10 @@ namespace SudoUno {
             // TODO: how the hell do I reference an enum as a value in C++?!?!?!
             while (myGame->getState() == 0) {
                 // Update the state for the players
-                updateGameState(myGame);
+                updateGameState(myGame, gameThreadIndex);
 
                 // Listen for the current player's move
-
+                break; // TODO: remove me
                 // idk
             }
         }

@@ -134,6 +134,7 @@ namespace SudoUno {
                 int getNumPlayers() {return players.size();}
                 vector<card::Card> createDeck();
                 GameState getState() {return state;}
+                card::Card getCurrentCard() {return currentCard;}
         };
 
         extern vector<Game> gamesVect;

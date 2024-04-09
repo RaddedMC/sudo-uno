@@ -86,6 +86,7 @@ namespace SudoUno {
             util::log(index, "Player order set");
 
             players = gamePlayers;
+            currentPlayer = gamePlayers[0];
             
             //shuffle cards, 
             random_shuffle(cards.begin(), cards.end());
