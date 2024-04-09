@@ -50,16 +50,27 @@ namespace SudoUno {
 
         void Game::dealCards(Player p) {
             // TODO: implement me!
-            for (int j = 0; j < 7; j++){
-                //taking cards from the end of the vector and deleting them from the deck the game holds 
-                //(I think this is how we want to do things?)
-                p.getHand().push_back(cards.back());
-                cards.pop_back();
+
+            //Deal 7 cards to each player
+            for (int i = 0; i < 7; i++) {
+                //Gets a card from the deck and adds it to the player's hand
+                p.addCard(pullCard());
             }
         }
 
         card::Card Game::pullCard() {
             // TODO: implement me!
+
+            //Pull a card from the deck
+            std::vector<card::Card> deck;
+
+            //Get card from deck at random
+            int cardIndex = rand() % deck.size();
+            card::Card c = deck[cardIndex];
+            //Remove from deck
+            deck.erase(deck.begin() + cardIndex);
+            //Return card
+            return c;
         }
 
         void Game::Start() {
@@ -109,8 +120,32 @@ namespace SudoUno {
             state = playing;
         }
 
+        //Reason is either the name of the player that won or "error"
         void Game::End(string reason) {
             // TODO: implement me!
+
+            //End the game by disconnecting all players in session then closing the server thread
+            for (int i = 0; i < this->players.size(); i++) {
+                if(players[i].getName() == reason) {
+                    //Send a message to the player
+                    players[i].sendToSocket("Game Over: You won!");
+                } else if(reason != "error"){
+                    //Send a message to the player
+                    players[i].sendToSocket("Game over: " + reason + " won!");
+                } else {
+                    //Send a message to the player
+                    players[i].sendToSocket("Game over: An error occurred.");
+                }
+
+                //Close the player's socket
+                // TODO: add a CloseSocket method for a player
+                players[i].getSocket().Close();
+            }
+
+            //Change game state to finished
+            state = GameState::finished;
+
+            //Add additional code to close the server thread if done here
         }
 
         void Game::TakeTurn(Player p, card::Card c, bool saidSudo, bool pickUp) {
