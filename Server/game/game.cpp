@@ -1,5 +1,8 @@
 #include "game.h"
+#include <vector>
+#include <algorithm>
 
+using namespace std;
 namespace SudoUno {
     namespace game {
 
@@ -51,6 +54,44 @@ namespace SudoUno {
 
         void Game::Start() {
             //work here
+            //make deck
+            //make vector to hold all cards
+            vector<card::Card> decktor = createDeck();
+
+            //game has a cards field- assign old vector to this
+            this.cards = decktor;
+
+            //get all players 
+            vector<Player> gamePlayers = this.players;
+
+            //create turn order- will reassign to game with new player order so other
+            //methods can just use this.players
+
+            //if this doesn't work, std::shuffle <- this requires a random generator, need to import more stuff
+            //shuffle all players, from start to end of vector
+            random_shuffle(gamePlayers.begin(), gamePlayers.end());
+
+            this.players = gamePlayers;
+            
+            //shuffle cards, 
+            random_shuffle(this.cards.begin(), this.cards.end());
+
+            //give 7 to each player
+            //loop through all four players
+            int position;
+             for (int i = 0; i < 4; i++){
+                //give seven cards
+                for (int j = 0; j < 7; j++){
+                    //taking cards from the end of the vector and deleting them from the deck the game holds 
+                    //(I think this is how we want to do things?)
+                    this.players[i].hand.push_back(this.cards.back);
+                    this.cards.pop_back();
+                }
+            }
+
+            //one to be top of deck card
+            //is this just checked by checking the top of the array?
+
         }
 
         void Game::End(string reason) {
@@ -59,6 +100,40 @@ namespace SudoUno {
 
         void Game::TakeTurn(Player p, card::Card c, bool saidSudo, bool pickUp) {
             // TODO: implement me!
+        }
+
+        vector<card::Card> Game::createDeck()
+        {
+            // Initialize an empty deck
+            vector<card::Card> deck;
+
+            // Loop over each of the 4 colors
+            for (int i = 0; i < 4; i++)
+            {
+                // Loop over each of the 13 types
+                for (int j = 0; j < 13; j++)
+                {
+                    // Add a card of the current color and type to the deck
+                    //(card::CardColor)i <- casting i to CardColor enum
+                    deck.push_back(card::Card((card::CardColor)i, (card::CardType)j));
+
+                    // If the card type is not 0, add a second card of the same color and type
+                    if (j != 0)
+                    {
+                        deck.push_back(card::Card((card::CardColor)i, (card::CardType)j));
+                    }
+                }
+            }
+
+            // Add 4 wild and 4 wild4 cards to the deck
+            for (int i = 0; i < 4; i++)
+            {
+                deck.push_back(card::Card(card::black, card::wild));
+                deck.push_back(card::Card(card::black, card::wild4));
+            }
+
+            // Return the completed deck
+            return deck;
         }
     }
 }
