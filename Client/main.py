@@ -60,6 +60,8 @@ def lobby_loop(connection):
 
         data = connection.receive()
 
+        lobby_end(data)
+
         # Check if the game has started
         if "Lobby.start" in data:
             player_names = [
@@ -86,6 +88,9 @@ def game_loop(connection):
 
         # Update game state
         data = connection.receive()
+
+        lobby_end(data)
+
         if "Game.state.update" in data:
             for line in data.split("\n"):
                 if "players" in line:
@@ -122,6 +127,8 @@ def game_loop(connection):
                         "sudo = false",
                     ]
                 )
+
+            lobby_end(data)
 
             # Handle server response
             if "Turn.approve" in data:
@@ -178,6 +185,9 @@ def main():
         # print welcome message from server
         client_name = handleGetName()
         response = connection.send(["Lobby.request", f'name = "{client_name}"'])
+
+        lobby_end(response)
+
         client_name = response.split('\n\tname="')[1].split('"\n')[0]
 
         lobby_loop(connection)
