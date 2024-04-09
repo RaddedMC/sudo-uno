@@ -37,7 +37,7 @@ namespace SudoUno
             {
                 util::log('I', "Initialized first game");
                 // Start by initialzing first game
-                game::gamesVect.push_back(game::Game(game::Player(name, sk)));
+                game::gamesVect.push_back(game::Game(game::Player(name, sk), 0));
                 // And its thread
                 spawnGameThread(0); // Since this is the first game we know it's index 0
             }
@@ -53,7 +53,7 @@ namespace SudoUno
                     // YES, we need to start a new lobby
                     // No need to tell the player that they've entered the game since there is only one player.
                     // But we DO need to create the thread
-                    game::gamesVect.push_back(game::Game(game::Player(name, sk)));
+                    game::gamesVect.push_back(game::Game(game::Player(name, sk), game::gamesVect.size() - 1));
                     spawnGameThread(game::gamesVect.size() - 1);
                 }
                 else

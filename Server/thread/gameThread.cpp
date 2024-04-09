@@ -89,7 +89,7 @@ namespace SudoUno {
                     }
                 }
 
-                myGame->players[playerNum].sendToSocket(msg + "\n.fin");
+                myGame->players[playerNum].sendToSocket(msg + "\n.fin\n");
             }
 
             // Game is now started!

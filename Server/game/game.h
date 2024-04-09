@@ -89,6 +89,11 @@ namespace SudoUno {
                 void sendToSocket(string msg) {
                     sk.Write(msg);
                 };
+
+                // Retrieve the player's hand
+                vector<card::Card> getHand() {
+                    return hand;
+                }
         };
 
         enum GameState {
@@ -104,13 +109,13 @@ namespace SudoUno {
                 Player currentPlayer;
                 vector<card::Card> cards;
                 GameState state;
+                int index;
             public:
                 vector<Player> players;
-                Game(Player p);
+                Game(Player p, int i);
                 Player getCurrentPlayer() {return currentPlayer;};
                 void addPlayer(Player p) {
                     players.push_back(p);
-                    dealCards(p);
                 }
                 void dealCards(Player p);
                 card::Card pullCard();

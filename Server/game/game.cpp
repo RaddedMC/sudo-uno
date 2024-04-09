@@ -40,12 +40,19 @@ namespace SudoUno {
             {finished, "Finished"}
         };
 
-        Game::Game(Player p) : currentPlayer(p), state(GameState::waiting) {
+        Game::Game(Player p, int i) : currentPlayer(p), state(GameState::waiting){
             addPlayer(p);
+            index = i;
         }
 
         void Game::dealCards(Player p) {
             // TODO: implement me!
+            for (int j = 0; j < 7; j++){
+                //taking cards from the end of the vector and deleting them from the deck the game holds 
+                //(I think this is how we want to do things?)
+                p.getHand().push_back(cards.back());
+                cards.pop_back();
+            }
         }
 
         card::Card Game::pullCard() {
@@ -53,45 +60,49 @@ namespace SudoUno {
         }
 
         void Game::Start() {
+            // -- Create card deck -- //
             //work here
             //make deck
             //make vector to hold all cards
+            util::log(index, "Game started!");
             vector<card::Card> decktor = createDeck();
+            util::log(index, "Deck created");
 
             //game has a cards field- assign old vector to this
-            this.cards = decktor;
+            cards = decktor;
 
             //get all players 
-            vector<Player> gamePlayers = this.players;
+            vector<Player> gamePlayers = players;
 
             //create turn order- will reassign to game with new player order so other
-            //methods can just use this.players
+            //methods can just use players
 
             //if this doesn't work, std::shuffle <- this requires a random generator, need to import more stuff
             //shuffle all players, from start to end of vector
             random_shuffle(gamePlayers.begin(), gamePlayers.end());
+            util::log(index, "Player order set");
 
-            this.players = gamePlayers;
+            players = gamePlayers;
             
             //shuffle cards, 
-            random_shuffle(this.cards.begin(), this.cards.end());
+            random_shuffle(cards.begin(), cards.end());
+            util::log(index, "Cards shuffled");
 
+            // -- Deal cards to players -- //
             //give 7 to each player
             //loop through all four players
             int position;
              for (int i = 0; i < 4; i++){
                 //give seven cards
-                for (int j = 0; j < 7; j++){
-                    //taking cards from the end of the vector and deleting them from the deck the game holds 
-                    //(I think this is how we want to do things?)
-                    this.players[i].hand.push_back(this.cards.back);
-                    this.cards.pop_back();
-                }
+                dealCards(players[i]);
             }
+            util::log(index, "Cards dealt");
 
             //one to be top of deck card
             //is this just checked by checking the top of the array?
-
+            
+            // -- Set game state to PLAYING -- //
+            state = playing;
         }
 
         void Game::End(string reason) {
