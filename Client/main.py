@@ -47,7 +47,7 @@ turn = "Player1"
 client_name = "Player1"
 
 
-def lobby_loop():
+def lobby_loop(connection):
     dots = 0
     i = 0 #temp variable
     # Lobby Loop (checks server every itteration to see if it should start the game)
@@ -70,7 +70,7 @@ def lobby_loop():
         
 
 
-def game_loop():
+def game_loop(connection):
     # Game loop
     while True:
         # Clear terminal
