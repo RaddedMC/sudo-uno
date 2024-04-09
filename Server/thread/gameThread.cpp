@@ -9,7 +9,7 @@ namespace SudoUno {
             game::Game* myGame = &game::gamesVect[gameThreadIndex];
 
             // Wait for the game to fill
-            util::log('G', "Game lobby opened");
+            util::log(gameThreadIndex, "Game lobby opened");
 
             // Wait for the game player count to increase
             int lastPlayers = myGame->getNumPlayers();
@@ -23,7 +23,7 @@ namespace SudoUno {
                 if (currentPlayers != lastPlayers) {
 
                     // Log that players have changed
-                    util::log('G', "Players have changed for this game!");
+                    util::log(gameThreadIndex, "Players have changed for this game!");
 
                     // Begin logging the new player list
                     string logString = "Players: [";
@@ -51,7 +51,7 @@ namespace SudoUno {
                     }
 
                     // Log the player list
-                    util::log('G', logString + "]");
+                    util::log(gameThreadIndex, logString + "]");
 
                     // Update the player count
                     lastPlayers = currentPlayers;

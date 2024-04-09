@@ -33,6 +33,7 @@ namespace SudoUno {
     namespace util {
         void ascii();
         void log(char level, const string& msg);
+        void log(int index, const string& msg);
     }
 
     // The network namespace will handle network functionalities like sockets.

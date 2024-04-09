@@ -12,8 +12,6 @@ namespace SudoUno {
     // -- I: Initialization
     // -- E: Error
 
-    // TODO: give threads the ability to log with unique identifiers
-    // TODO: 
     void util::log(char level, const string& msg) {
 
         // Get the current time for use in the log
@@ -29,6 +27,11 @@ namespace SudoUno {
 
         // Now log!
         cout << formatted_time << " [" << level << "]: " << msg << endl;
+    }
+
+    // Logging for specific games
+    void util::log(int index, const string& msg) {
+        log('G', "[" + to_string(index) + "] -- " + msg);
     }
 
     void util::ascii() {
