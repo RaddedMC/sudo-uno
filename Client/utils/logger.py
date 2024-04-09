@@ -55,19 +55,10 @@ def print_card_type(card_type):
 
 """,
         "4": r"""
- _  _  
-| || | 
-| || |_
-|__   _|
-   |_|
+
 """,
         "5": r"""
- _____ 
-| ____|
-| |__  
-|___ \ 
- ___) |
-|____/ 
+
 """,
         "6": r"""
 
@@ -137,7 +128,8 @@ def printTurn(player_name, is_current_turn):
     else:
         print(f"{Fore.RED}{Style.BRIGHT}Waiting for {player_name}'s turn...{Style.RESET_ALL}")
 
-def printOptions(options):
+def printOptions():
+    options = ["Play a card", "Draw a card", "Call UNO"]
     """Prints the available options for the player's turn."""
     print("Options:")
     for i, option in enumerate(options, start=1):
@@ -174,9 +166,8 @@ def handerGameInit():
     print(f"{Fore.RED}{Style.BRIGHT} .----------------.  .----------------.  .----------------.  .----------------. \n| .--------------. || .--------------. || .--------------. || .--------------. |\n| |    _______   | || | _____  _____ | || |  ________    | || |     ____     | |\n| |   /  ___  |  | || ||_   _||_   _|| || | |_   ___ `.  | || |   .'    `.   | |\n| |  |  (__ \\_|  | || |  | |    | |  | || |   | |   `. \\ | || |  /  .--.  \\  | |\n| |   '.___`-.   | || |  | '    ' |  | || |   | |    | | | || |  | |    | |  | |\n| |  |`\\____) |  | || |   \\ `--' /   | || |  _| |___.' / | || |  \\  `--'  /  | |\n| |  |_______.'  | || |    `.__.'    | || | |________.'  | || |   `.____.'   | |\n| |              | || |              | || |              | || |              | |\n| '--------------' || '--------------' || '--------------' || '--------------' |\n '----------------'  '----------------'  '----------------'  '----------------' \n\n                                     ______                                     \n                                    |______|                                    \n\n           .----------------.  .-----------------. .----------------.           \n          | .--------------. || .--------------. || .--------------. |          \n          | | _____  _____ | || | ____  _____  | || |     ____     | |          \n          | ||_   _||_   _|| || ||_   \\|_   _| | || |   .'    `.   | |          \n          | |  | |    | |  | || |  |   \\ | |   | || |  /  .--.  \\  | |          \n          | |  | '    ' |  | || |  | |\\ \\| |   | || |  | |    | |  | |          \n          | |   \\ `--' /   | || | _| |_\\   |_  | || |  \\  `--'  /  | |          \n          | |    `.__.'    | || ||_____|\\____| | || |   `.____.'   | |          \n          | |              | || |              | || |              | |          \n          | '--------------' || '--------------' || '--------------' |          \n           '----------------'  '----------------'  '----------------'           {Style.RESET_ALL}")
     #Add game rules
     print(f"{Fore.YELLOW}{Style.BRIGHT}Game Rules:{Style.RESET_ALL}")
-    print_card_type("0")
+    #print_card_type("0")
     pass
-    
 
 def handleGetName():
     print(f"{Fore.WHITE}{Style.BRIGHT}Enter your username to get started:{Style.RESET_ALL}")
@@ -190,8 +181,19 @@ def handleGetServer():
 
     return ip, port
 
-def waitingForLobby():
-    print(f"{Fore.YELLOW}{Style.BRIGHT}Waiting for other players...{Style.RESET_ALL}")
+def waitingForLobby(x):
+    if x == 3:
+        print(f"{Fore.YELLOW}{Style.BRIGHT}Waiting for other players...{Style.RESET_ALL}")
+        return 0
+    if x == 2:
+        print(f"{Fore.YELLOW}{Style.BRIGHT}Waiting for other players..{Style.RESET_ALL}")
+        return 3
+    if x == 1:
+        print(f"{Fore.YELLOW}{Style.BRIGHT}Waiting for other players.{Style.RESET_ALL}")
+        return 2
+    if x == 0:
+        print(f"{Fore.YELLOW}{Style.BRIGHT}Waiting for other players{Style.RESET_ALL}")
+        return 1
 
 def handleJoinedGame():
     #Print this in red font
@@ -200,6 +202,16 @@ def handleJoinedGame():
 
 def handleGetNumPlayers():
     return int(input("Enter the number of players (2-4): "))
+
+def printUI(players_map,client_name,client_hand,current_card,turn,bool):
+    print("SUDO UNO Game UI!")
+    printOpponentsHand(players_map, client_name)
+    printHand(client_hand)
+    printTopcard(current_card)
+    printTurn(turn, bool)
+    if bool:
+        printOptions()
+
 
 # Example usage
 if __name__ == "__main__":
