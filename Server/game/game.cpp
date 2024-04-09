@@ -157,11 +157,54 @@ namespace SudoUno {
                 return;
             }
 
+            // TODO: not sure how we want to handle card being empty (use nullptr?)
+            // if (...) {
+            //     string msg = "turn.reject\n\treason: \"You must place a card or pick up a card!\"\n.fin\n";
+            //     p.sendToSocket(msg);
+            // }
+
             // Player wants to place a card from their hand
+            // Check if the move is valid
+            bool isValid = true; // TODO: return from helper function
+            if (isValid) {
+                string msg = "turn.approve\n\tyour_cards =\n";
 
-            // Send player the cards in their hand
+                // Consume card
+                p.removeCard(c);
+                currentCard = c;
 
-            // Send an update to all other players (do I even need to do this? The game loop already sends updates)
+                // Perform the card's action
+
+
+                // Was this the player's last card?
+                if (p.getHand().size() == 0) {
+                    // Player wins, end the game
+                    End(p.getName());
+                    return;
+                }
+
+
+                // ...
+
+                // Did the player place down their second-last card without saying SUDO?
+                if (p.getHand().size() == 1 && !saidSudo) {
+                    // Add two cards to the player's hand
+                    p.addCard(pullCard());
+                    p.addCard(pullCard());
+                    for (int i = 0; i < p.getHand().size(); i++) { // TODO: turn this into a helper function
+                        msg += "\t\t\"" + p.getHand()[i].getCardEncoding() + "\"\n";
+                    }
+                    msg += "\tYou forgot to say sudo.\n";
+                } 
+                else {
+                    for (int i = 0; i < p.getHand().size(); i++) { // TODO: move this to util?
+                        msg += "\t\t\"" + p.getHand()[i].getCardEncoding() + "\"\n";
+                    }
+                }
+
+                msg += ".fin\n";
+                p.sendToSocket(msg);
+            }
 
 
         }

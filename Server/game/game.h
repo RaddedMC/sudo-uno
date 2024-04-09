@@ -85,6 +85,17 @@ namespace SudoUno {
                     hand.push_back(c);
                 };
 
+                // Removes a card from the player's hand if it exists
+                void removeCard(card::Card c) {
+                    // Find the first occurrence of the card
+                    vector<card::Card>::iterator cardIterator = find(hand.begin(), hand.end(), c);
+
+                    // Card is in player's hand, remove it
+                    if (cardIterator != hand.end()) {
+                        hand.erase(cardIterator);
+                    }
+                }
+
                 // Listens to the player's socket. Returns their response.
                 string listen() { return proto::recieveProtoMessage(sk);}
 
