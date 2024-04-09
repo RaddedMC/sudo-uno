@@ -60,6 +60,8 @@ namespace SudoUno {
                         return ColorNames[color] + "|" + TypeNames[type];
                     };
             };
+
+            Card parseCardFromString(string colorString, string typeString);
         }
 
         class Player {

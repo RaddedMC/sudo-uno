@@ -212,24 +212,8 @@ namespace SudoUno {
 
                             // Their move is valid
                             } else {
-                                // Log their move
-                                if (cardInfo.size() == 2 ) {
-                                    // They placed a card
-                                    util::log(gameThreadIndex, "Their move: " + cardInfo[0] + "|" + cardInfo[1] + (saidSudo ? " and sudo": " no sudo"));
-                                } else {
-                                    // They are picking up a card
 
-                                    // Give them a new card
-                                    myGame->getCurrentPlayer().addCard(myGame->pullCard());
-
-                                    // Set the next player in the rotation to be the current player
-                                    
-
-                                    // Loop
-
-                                    util::log(gameThreadIndex, "They picked up card ");
-                                }
-
+                                myGame->TakeTurn(myGame->getCurrentPlayer(), game::card::parseCardFromString(cardInfo[0], cardInfo[1]), saidSudo, chosePick);
                             }
                         }
                         // If something goes wrong here

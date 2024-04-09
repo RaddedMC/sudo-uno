@@ -34,6 +34,27 @@ namespace SudoUno {
                 {wild4, "Wild4"},
                 {wild, "Wild"}
             };
+
+            Card parseCardFromString(string colorString, string typeString) {
+                CardColor color = black;
+                CardType type = one;
+
+                for(auto const& pair: ColorNames) {
+                    if(pair.second == colorString) {
+                        color = pair.first;
+                        break;
+                    }
+                }
+
+                for(auto const& pair: TypeNames) {
+                    if(pair.second == typeString) {
+                        type = pair.first;
+                        break;
+                    }
+                }
+
+                return Card(color, type);
+            }
         }
 
         map <GameState, string> GameStateNames = {
