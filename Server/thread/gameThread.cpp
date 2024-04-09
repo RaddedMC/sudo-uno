@@ -198,7 +198,6 @@ namespace SudoUno {
 
                             // If there was an error extracting SUDO, or PICK, malformed!
                             if (saidSudo == -1 || chosePick == -1) {
-                                cout << "Their booleans are corrupt" << endl;
                                 myGame->getCurrentPlayer().sendToSocket("turn.reject\n\treason: \"Your message was malformed.\"\n.fin\n");
                                 util::log(gameThreadIndex, "Their message was malformed.");
                                 continue;
@@ -207,20 +206,17 @@ namespace SudoUno {
                             // If they did not choose to pick up and the card | did not match, malformed!
                             if (cardInfo.size() != 2 && !chosePick) {
                                 // Something went wrong
-                                cout << "They did not have the correct card info and did not pick up a card" << endl;
                                 myGame->getCurrentPlayer().sendToSocket("turn.reject\n\treason: \"You did not provide correct card info. You must pick up a card if you cannot play one.\"\n.fin\n");
                                 util::log(gameThreadIndex, "Their message was malformed.");
                                 continue;
 
                             // Their move is valid
                             } else {
-                                cout << "valid move" << endl;
                                 util::log(gameThreadIndex, "Their move: " + cardInfo[0] + "|" + cardInfo[1] + " " + (saidSudo ? "sudo, ": "") + (chosePick ? "picked up": ""));
                             }
                         }
                         // If something goes wrong here
                         catch (string e) {
-                            cout << "exception: " << e << endl;
                             myGame->getCurrentPlayer().sendToSocket("turn.reject\n\treason: \"Your message was malformed.\"\n.fin\n");
                             util::log(gameThreadIndex, "Their message was malformed.");
                             continue;
@@ -229,7 +225,6 @@ namespace SudoUno {
                     } else {
                         // They have malformed their message.
                         // We'll try again.
-                        cout<<"No turn take"<<endl;
                         myGame->getCurrentPlayer().sendToSocket("turn.reject\n\treason: \"Your message was malformed.\"\n.fin\n");
                         util::log(gameThreadIndex, "Their message was malformed.");
                         continue;
