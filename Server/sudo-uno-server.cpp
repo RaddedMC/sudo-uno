@@ -1,3 +1,4 @@
+#include "game/game.h"
 #include "util/util.h"
 #include "thread/sudoThreads.h"
 #include <thread>
@@ -7,6 +8,7 @@ using namespace std;
 
 // As i've done for all the labs, a vector to hold the threads to keep them referenced until shutdown
 vector <thread> waiterThreads;
+vector <game::Game> game::gamesVect;
 
 // Create a semaphore to ensure that players are added to games in a single-file fashion
 proc::Semaphore canJoin("canJoin", 1, true);

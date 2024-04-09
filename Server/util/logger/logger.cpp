@@ -10,6 +10,7 @@ namespace SudoUno {
     // -- W: Waiter info
     // -- !: Important
     // -- I: Initialization
+    // -- E: Error
 
     // TODO: give threads the ability to log with unique identifiers
     // TODO: 

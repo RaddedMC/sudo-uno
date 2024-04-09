@@ -107,8 +107,8 @@ if __name__ == "__main__":
         handerGameInit()
 
         #init server connection
-        ip, port = handleGetServer()
-        connection = Connection(ip, port)
+        #ip, port = handleGetServer()
+        connection = Connection("127.0.0.1", "6969")
 
         # print welcome message from server
         client_name = handleGetName()

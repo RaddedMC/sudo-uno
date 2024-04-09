@@ -1,4 +1,6 @@
 #include "sudoThreads.h"
+#include "../game/game.h"
+#include <thread>
 
 namespace SudoUno {
 
@@ -6,6 +8,16 @@ namespace SudoUno {
 
         // Create a semaphore to ensure that players are added to games in a single-file fashion
         proc::Semaphore canJoin("canJoin", 1);
+
+        // Create a semaphore that belongs to this thread. This will be used to pin this thread open so that the reference to the gameThread stays available.
+        // This way, this current thread remains in memory but is not wasting CPU cycles.
+        vector <thread> gameThreadVec;
+
+        // Spawn a game thread
+        void spawnGameThread(int gameVecIndex) {
+            thread tr(sudoThreads::gameThreadFunction, gameVecIndex);
+            gameThreadVec.push_back(std::move(tr));
+        }
 
         // Adds a player to a game.
         void addPlayerToGame(network::Socket sk, string name) {
@@ -16,9 +28,31 @@ namespace SudoUno {
             // We have the semaphore!
             util::log('W', "We have the canJoin semaphore!");
 
-            // TODO: Add the player to the game
-            sleep(1);
+            // If there are no games,
+            if (game::gamesVect.size() == 0) {
+                util::log('I', "Initialized first game");
+                // Start by initialzing first game
+                game::gamesVect.push_back(game::Game(game::Player(name, sk)));
+                // And its thread
+                spawnGameThread(0); // Since this is the first game we know it's index 0
+            } else {
+                // We need to retrieve the topmost game from the games vector
+                game::Game* topGame = &game::gamesVect.back();
 
+                // Is this game full?
+                if (topGame->getNumPlayers() == 4) {
+                    util::log('W', "The topmost game is full!");
+                    // YES, we need to start a new lobby
+                    // No need to tell the player that they've entered the game since there is only one player.
+                    // But we DO need to create the thread
+                    spawnGameThread(game::gamesVect.size()-1);
+                } else {
+                    util::log('W', "The topmost game still has room!");
+                    // NO, we can add to the current lobby
+                    topGame->addPlayer(game::Player(name, sk));
+                }
+            }
+            
             util::log('W', "Player has been added to game. Releasing semaphore and cleaning up thread...");
             canJoin.Signal();
         }
