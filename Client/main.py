@@ -16,8 +16,10 @@ from utils.logger import (
     handleGetServer,
     printUI,
 )
-from utils.connection import Connection 
+from utils.connection import Connection
 
+
+import logging
 import os
 
 
@@ -48,26 +50,33 @@ client_name = "Player1"
 
 
 def lobby_loop(connection):
-    dots = 0
-    i = 0 #temp variable
-    # Lobby Loop (checks server every itteration to see if it should start the game)
+    dots = 1
+    # Lobby Loop (checks server every iteration to see if it should start the game)
+    print(f"Welcome {client_name}!")
+
+
     while True:
         clear_terminal()
-        
-        dots = waitingForLobby(dots)
+        print(f"Welcome {client_name}!")
+
+        data = connection.receive()
+
         # Check if the game has started
-        #if con.lobby() returns True handleJoining a game
-        #con.lobby() returns a boolean of wether or not the client is in a game with 4 players
-        #nPlayers = con.lobby()
-        nPlayers = 0
-        print(f"({nPlayers}/4) players")
-        if i > 3: #4 == nPlayers
-            handleJoinedGame()
-            break
+        if "Lobby.start" in data:
+            player_names = [
+                line.split("= ")[1].strip("“”")
+                for line in data.split("\n")
+                if "name" in line
+            ]
+            if client_name in player_names and len(player_names) == 4:
+                handleJoinedGame()
+                break
         else:
-            i=i+1
+            waitingForLobby(dots)
+            dots += 1
+            if dots > 3:
+                dots = 1
         time.sleep(1)
-        
 
 
 def game_loop(connection):
@@ -75,26 +84,26 @@ def game_loop(connection):
     while True:
         # Clear terminal
         clear_terminal()
-        
+
         # Update game state
-        #TODO: con. function to get the players_map object
-        #TODO: con. function to get the client_hand array
-        #TODO: con. function to get the current_card string
-        #TODO: con. function to get the current_card string
-        #TODO: con. function to get the current_card string
+        # TODO: con. function to get the players_map object
+        # TODO: con. function to get the client_hand array
+        # TODO: con. function to get the current_card string
+        # TODO: con. function to get the current_card string
+        # TODO: con. function to get the current_card string
 
         # Check if it's the player's turn
         if turn == client_name:
             printOptions()
-            printUI(players_map,client_name,client_hand,current_card,turn,True)          
+            printUI(players_map, client_name, client_hand, current_card, turn, True)
             player_choice = input("Enter your choice: ")
             # Process player choice on the server
             # TODO: Implement code here..
             # Update game state for the 3 globle variables below
             handlePlayerChoice(player_choice, client_hand, client_name)
-            
+
         else:
-            printUI(players_map,client_name,client_hand,current_card,turn,False)          
+            printUI(players_map, client_name, client_hand, current_card, turn, False)
             # Wait for game state change
 
         # lil pause maybe send to the server end turn idk
@@ -102,24 +111,23 @@ def game_loop(connection):
 
 
 if __name__ == "__main__":
-    #Play again loop
-    while(True):
+    # Play again loop
+    while True:
         handerGameInit()
 
-        #init server connection
-        #ip, port = handleGetServer()
+        # init server connection
+        # ip, port = handleGetServer()
         connection = Connection("127.0.0.1", "6969")
 
         # print welcome message from server
         client_name = handleGetName()
-        client_name = 'name = "' + client_name + '"'
-        connection.send(client_name)
+        response = connection.send(["Lobby.request", f'name = "{client_name}"'])
+        client_name = response.split('\n\tname="')[1].split('"\n')[0]
 
-        
         lobby_loop(connection)
         game_loop(connection)
-        #Play again?
-        if ("y" == input("play again?")):
+        # Play again?
+        if "y" == input("play again?"):
             pass
         else:
             break
