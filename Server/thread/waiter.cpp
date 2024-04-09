@@ -49,10 +49,11 @@ namespace SudoUno
                 // Is this game full?
                 if (topGame->getNumPlayers() == 4)
                 {
-                    util::log('W', "The topmost game is full!");
+                    util::log('W', "The topmost game is full! Starting a new one...");
                     // YES, we need to start a new lobby
                     // No need to tell the player that they've entered the game since there is only one player.
                     // But we DO need to create the thread
+                    game::gamesVect.push_back(game::Game(game::Player(name, sk)));
                     spawnGameThread(game::gamesVect.size() - 1);
                 }
                 else
