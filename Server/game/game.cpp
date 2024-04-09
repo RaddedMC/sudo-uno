@@ -42,6 +42,7 @@ namespace SudoUno {
             {finished, "Finished"}
         };
 
+        // Initializes the game
         Game::Game(Player p, int i) : currentPlayer(p),
             state(GameState::waiting),
             currentCard(card::Card((card::CardColor)0, (card::CardType)0))
@@ -50,6 +51,7 @@ namespace SudoUno {
             index = i;
         }
 
+        // Deals 7 cards to a player.
         void Game::dealCards(Player * p) {
             //Deal 7 cards to each player
             for (int i = 0; i < 7; i++) {
@@ -58,12 +60,14 @@ namespace SudoUno {
             }
         }
 
+        // Returns the topmost card from the deck.
         card::Card Game::pullCard() {
             card::Card topCard = cards.back();
             cards.pop_back();
             return topCard;
         }
 
+        // Begins the game.
         void Game::Start() {
             // -- Create card deck -- //
             //work here
@@ -126,7 +130,8 @@ namespace SudoUno {
             state = playing;
         }
 
-        //Reason is either the name of the player that won or "error"
+        // Terminates the game given some reason.
+        // Reason is either the name of the player that won or "error"
         void Game::End(string reason) {
             // TODO: implement me!
 
@@ -154,10 +159,12 @@ namespace SudoUno {
             //Add additional code to close the server thread if done here
         }
 
+        // Ran when a player takes a turn that does not involve picking up a card.
         void Game::TakeTurn(Player p, card::Card c, bool saidSudo, bool pickUp) {
             // TODO: implement me!
         }
 
+        // Creates the card deck and shuffles it.
         vector<card::Card> Game::createDeck()
         {
             // Initialize an empty deck
