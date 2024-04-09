@@ -90,6 +90,11 @@ namespace SudoUno {
                     sk.Write(msg);
                 };
 
+                // Closes a player's socket
+                void closeSocket() {
+                    sk.Close();
+                }
+
                 // Retrieve the player's hand
                 vector<card::Card> getHand() {
                     return hand;

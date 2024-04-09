@@ -139,7 +139,7 @@ namespace SudoUno {
 
                 //Close the player's socket
                 // TODO: add a CloseSocket method for a player
-                players[i].getSocket().Close();
+                players[i].closeSocket();
             }
 
             //Change game state to finished
