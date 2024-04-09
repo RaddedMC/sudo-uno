@@ -118,6 +118,7 @@ namespace SudoUno {
                 void End(string reason);
                 void TakeTurn(Player p, card::Card c, bool saidSudo, bool pickUp);
                 int getNumPlayers() {return players.size();}
+                vector<card::Card> createDeck();
         };
 
         extern vector<Game> gamesVect;
