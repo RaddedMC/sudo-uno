@@ -1,6 +1,8 @@
 #include "game.h"
+#include <random>
 #include <vector>
 #include <algorithm>
+#include <random>
 
 using namespace std;
 namespace SudoUno {
@@ -105,6 +107,19 @@ namespace SudoUno {
             //one to be top of deck card
             //is this just checked by checking the top of the array?
             currentCard = pullCard();
+
+            // TODO: see above about referencing enums in a way that isn't silly
+            if (currentCard.getColor() == 4) {
+                // TODO: Test this edge case
+                uniform_int_distribution<> colours(0,3);
+                random_device rd;
+                mt19937 gen(rd());
+                // TODO: there must be a better way to do this
+                card::CardColor randomColor = static_cast<card::CardColor>(colours(gen));
+                card::CardType wildType = static_cast<card::CardType>(14);
+                currentCard = card::Card(randomColor, wildType);
+            }
+
             util::log(index, "Top card set!");
 
             // -- Set game state to PLAYING -- //
