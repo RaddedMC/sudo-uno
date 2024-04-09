@@ -126,7 +126,7 @@ namespace SudoUno {
                 void addPlayer(Player p) {
                     players.push_back(p);
                 }
-                void dealCards(Player p);
+                void dealCards(Player * p);
                 card::Card pullCard();
                 void Start();
                 void End(string reason);

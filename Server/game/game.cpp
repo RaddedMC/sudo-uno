@@ -48,11 +48,11 @@ namespace SudoUno {
             index = i;
         }
 
-        void Game::dealCards(Player p) {
+        void Game::dealCards(Player * p) {
             //Deal 7 cards to each player
             for (int i = 0; i < 7; i++) {
                 //Gets a card from the deck and adds it to the player's hand
-                p.addCard(pullCard());
+                p->addCard(pullCard());
             }
         }
 
@@ -98,7 +98,7 @@ namespace SudoUno {
             int position;
             for (int i = 0; i < 4; i++){
                 //give seven cards
-                dealCards(players[i]);
+                dealCards(&players[i]);
             }
             util::log(index, "Cards dealt to players");
 

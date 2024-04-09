@@ -29,7 +29,7 @@ namespace SudoUno {
             for (int i = 0; i < myGame->getNumPlayers(); i++) {
                 publicInfo += "\t\t\"" + myGame->players[i].getName() + "|" + to_string(myGame->players[i].getHand().size()) + "\"\n";
                 
-                string cardLogString = myGame->players[i].getName() + "Has cards:\n";
+                string cardLogString = myGame->players[i].getName() + " Has cards:\n";
                 for (int cardIndex = 0; cardIndex < myGame->players[i].getHand().size(); cardIndex++) {
                     cardLogString += "\t" + myGame->players[i].getHand()[cardIndex].getCardEncoding() + "\n";
                 }
@@ -132,6 +132,8 @@ namespace SudoUno {
                 // Check every 50 ms
                 usleep(500000); // TODO: If players join too quickly I don't think they will all be added
             }
+
+
 
             // The lobby is now full!
 
