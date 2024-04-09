@@ -140,7 +140,30 @@ namespace SudoUno {
         }
 
         void Game::TakeTurn(Player p, card::Card c, bool saidSudo, bool pickUp) {
-            // TODO: implement me!
+            // Two valid actions: pick up a card from the deck, place a card from their hand
+
+            // Player picks up a card from the deck
+            if (pickUp) {
+                card::Card pickedCard = pullCard();
+
+                // Update player with the card that they picked up
+                p.addCard(pickedCard);
+                string msg = "turn.approve\n\tyour_cards =\n";
+                for (int i = 0; i < p.getHand().size(); i++) {
+                    msg += "\t\t\"" + p.getHand()[i].getCardEncoding() + "\"\n";
+                }
+                msg += ".fin\n";
+                p.sendToSocket(msg);
+                return;
+            }
+
+            // Player wants to place a card from their hand
+
+            // Send player the cards in their hand
+
+            // Send an update to all other players (do I even need to do this? The game loop already sends updates)
+
+
         }
 
         vector<card::Card> Game::createDeck()
