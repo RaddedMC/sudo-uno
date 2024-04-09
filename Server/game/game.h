@@ -56,6 +56,9 @@ namespace SudoUno {
 
                     CardColor getColor() {return color;};
                     CardType getType() {return type;};
+                    string getCardEncoding() {
+                        return ColorNames[color] + "|" + TypeNames[type];
+                    };
             };
         }
 
@@ -130,6 +133,7 @@ namespace SudoUno {
                 void TakeTurn(Player p, card::Card c, bool saidSudo, bool pickUp);
                 int getNumPlayers() {return players.size();}
                 vector<card::Card> createDeck();
+                GameState getState() {return state;}
         };
 
         extern vector<Game> gamesVect;

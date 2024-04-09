@@ -6,7 +6,17 @@ namespace SudoUno {
     namespace sudoThreads {
 
         void updateGameState(game::Game* myGame) {
-            // TODO: Implement me!
+            // Tell each player what's up
+            
+            // To send to everyone:
+            // Game.state.update
+            //     turn = "playername"
+            //     players =
+            //          "playername|6"
+            //          "playertwo|6"
+            //          "playerthree|6"
+            //          "playerfour|6"
+            //     current_card = "Red|5"
         }
 
         void gameThreadFunction(int gameThreadIndex) {
@@ -97,8 +107,18 @@ namespace SudoUno {
             }
 
             // Game is now started!
-
             myGame->Start();
+
+            // 0 = playing
+            // TODO: how the hell do I reference an enum as a value in C++?!?!?!
+            while (myGame->getState() == 0) {
+                // Update the state for the players
+                updateGameState(myGame);
+
+                // Listen for the current player's move
+
+                // idk
+            }
         }
     }
 }
