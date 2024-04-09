@@ -164,6 +164,8 @@ namespace SudoUno {
         string recieveProtoMessage(network::Socket sk);
         void malformedRequest(network::Socket sk);
         string retrieveOneLineItem(string key, string msg);
+        vector<string> retrievePairedLineItem(string key, string msg);
+        int retrieveBoolLineItem(string key, string msg);
     }
 };
 

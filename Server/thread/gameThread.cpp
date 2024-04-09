@@ -1,6 +1,7 @@
 #include "sudoThreads.h"
 #include <string>
 #include <unistd.h>
+#include <algorithm>
 
 namespace SudoUno {
     namespace sudoThreads {
@@ -169,9 +170,74 @@ namespace SudoUno {
                 updateGameState(myGame, gameThreadIndex);
 
                 // Listen for the current player's move
-                break; // TODO: remove me
-                // idk
+                while (true) {
+                    util::log(gameThreadIndex, "Waiting for " + myGame->getCurrentPlayer().getName() + " to make their move...");
+                    string nextMove = myGame->getCurrentPlayer().listen();
+
+                    // Move should be something along the lines of
+                    // turn.take
+                    //     card = "Red|6" -- or blank
+                    //     pick = true    -- or false
+                    //     sudo = false   -- or true
+
+                    // First we should verify that the player sent 'turn.take'
+                    string lowercaseMove = nextMove;
+                    transform(lowercaseMove.begin(), lowercaseMove.end(), lowercaseMove.begin(), ::tolower);
+                    if (lowercaseMove.find("turn.take") != string::npos) {
+                        // They said 'turn.take'
+                        // We need to ensure that they include "card, pick, sudo"
+                        try {
+                            // Extract their card, if present
+                            vector<string> cardInfo = proto::retrievePairedLineItem("card", nextMove);
+
+                            // Did they choose to pick up a card?
+                            int chosePick = proto::retrieveBoolLineItem("pick", nextMove);
+
+                            // Did they say SUDO?
+                            int saidSudo = proto::retrieveBoolLineItem("sudo", nextMove);
+
+                            // If there was an error extracting SUDO, or PICK, malformed!
+                            if (saidSudo == -1 || chosePick == -1) {
+                                cout << "Their booleans are corrupt" << endl;
+                                myGame->getCurrentPlayer().sendToSocket("turn.reject\n\treason: \"Your message was malformed.\"\n.fin\n");
+                                util::log(gameThreadIndex, "Their message was malformed.");
+                                continue;
+                            }
+
+                            // If they did not choose to pick up and the card | did not match, malformed!
+                            if (cardInfo.size() != 2 && !chosePick) {
+                                // Something went wrong
+                                cout << "They did not have the correct card info and did not pick up a card" << endl;
+                                myGame->getCurrentPlayer().sendToSocket("turn.reject\n\treason: \"You did not provide correct card info. You must pick up a card if you cannot play one.\"\n.fin\n");
+                                util::log(gameThreadIndex, "Their message was malformed.");
+                                continue;
+
+                            // Their move is valid
+                            } else {
+                                cout << "valid move" << endl;
+                                util::log(gameThreadIndex, "Their move: " + cardInfo[0] + "|" + cardInfo[1] + " " + (saidSudo ? "sudo, ": "") + (chosePick ? "picked up": ""));
+                            }
+                        }
+                        // If something goes wrong here
+                        catch (string e) {
+                            cout << "exception: " << e << endl;
+                            myGame->getCurrentPlayer().sendToSocket("turn.reject\n\treason: \"Your message was malformed.\"\n.fin\n");
+                            util::log(gameThreadIndex, "Their message was malformed.");
+                            continue;
+                        }
+
+                    } else {
+                        // They have malformed their message.
+                        // We'll try again.
+                        cout<<"No turn take"<<endl;
+                        myGame->getCurrentPlayer().sendToSocket("turn.reject\n\treason: \"Your message was malformed.\"\n.fin\n");
+                        util::log(gameThreadIndex, "Their message was malformed.");
+                        continue;
+                    }
+                }
             }
+
+            // The game has ended!
         }
     }
 }

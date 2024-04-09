@@ -91,7 +91,7 @@ namespace SudoUno
             {
                 // Now we need to check for the name line
                 string name = proto::retrieveOneLineItem("name", protomsg);
-                if (name.compare(""))
+                if (name.compare("")) // name NOT blank
                 {
                     // What is their name?
                     util::log('W', "They provided username '" + name + "'");
