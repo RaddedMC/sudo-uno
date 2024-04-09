@@ -18,17 +18,13 @@ class Connection:
         return data
 
     def receive(self):
-        data = ""
-        while ".fin" not in data:
-            ready_to_read, _, _ = select.select([self.connection], [], [], 1)
-            if ready_to_read:
-                data += self.connection.read_some().decode("ascii")
-            else:
-                return "No data"
-
-        # remove the .fin from the data string and return the data
-        data = data.replace(".fin", "")
-        return data
+        try:
+            data = self.connection.read_until(".fin".encode(), timeout=None)
+            data = data.decode("ascii").replace(".fin", "")
+            return data
+        except EOFError:
+            print("Connection closed.")
+            return ""
 
     def close(self):
         self.connection.close()

@@ -21,6 +21,7 @@ from utils.connection import Connection
 
 import logging
 import os
+import colorama
 
 
 def clear_terminal():
@@ -29,12 +30,7 @@ def clear_terminal():
 
 
 # Player and game state
-players_map = {
-    "Player 1": 6,
-    "Player 2": 5,
-    "Player 3": 4,
-    "Player 4": 2,
-}
+players_map = {}
 
 client_hand = [
     "Blue|Rev",
@@ -49,65 +45,97 @@ turn = "Player1"
 client_name = "Player1"
 
 
-def lobby_loop(connection):
-    dots = 1
-    # Lobby Loop (checks server every iteration to see if it should start the game)
+def lobby_loop(connection, client_name):
+    clear_terminal()  # Lobby Loop (checks server every iteration to see if it should start the game)
     print(f"Welcome {client_name}!")
 
     while True:
-        clear_terminal()
-        print(f"Welcome {client_name}!")
-
         data = connection.receive()
 
         lobby_end(data)
 
+        if "lobby.request.approved" in data:
+            clear_terminal()
+            print(f"Welcome {client_name}!")
+            print("A player has joined the game!")
+            lines = [line.strip() for line in data.split("\n")]
+            players_index = lines.index("players=")
+            players = lines[players_index + 1 :]
+            for player in players:
+                if player:
+                    print(player.strip("“”"))
+
         # Check if the game has started
-        if "Lobby.start" in data:
-            player_names = [
-                line.split("= ")[1].strip("“”")
-                for line in data.split("\n")
-                if "name" in line
-            ]
-            if client_name in player_names and len(player_names) == 4:
-                handleJoinedGame()
-                break
-        else:
-            waitingForLobby(dots)
-            dots += 1
-            if dots > 3:
-                dots = 1
-        time.sleep(1)
+        if "lobby.start" in data:
+            print("The game has started!")
+
+            game_loop(connection, client_name)
+            # player_names = [
+            #     line.split("= ")[1].strip("“”")
+            #     for line in data.split("\n")
+            #     if "name" in line
+            # ]
+            # if client_name in player_names and len(player_names) == 4:
+            #     handleJoinedGame()
+            #     break
+
+        # else:
+        #     waitingForLobby(dots)
+        #     dots += 1
+        #     if dots > 3:
+        #         dots = 1
+        # time.sleep(1)
 
 
-def game_loop(connection):
+def game_loop(connection, client_name):
+    clear_terminal()
+    turn = None
+
+    # print in green
+    print(colorama.Fore.GREEN + "The game has started!")
+    print(colorama.Fore.RESET)
+
     # Game loop
     while True:
         # Clear terminal
-        clear_terminal()
-
         # Update game state
         data = connection.receive()
 
         lobby_end(data)
 
-        if "Game.state.update" in data:
-            for line in data.split("\n"):
-                if "players" in line:
-                    players_map = {
-                        player.split("|")[0].strip("“”"): int(player.split("|")[1])
-                        for player in line.split("\n")[1:]
-                    }
-                elif "your_cards" in line:
-                    client_hand = [card.strip("“”") for card in line.split("\n")[1:]]
-                elif "current_card" in line:
-                    current_card = line.split(" = ")[1].strip("“”")
-                elif "turn" in line:
-                    turn = line.split(" = ")[1].strip("“”")
+        if "game.state.update" in data:
+            lines = data.split("\n")
+            for line in lines:
+                if "turn =" in line:
+                    turn = line.split("= ")[1].replace('"', "")
+
+                if "players =" in line:
+                    players_index = lines.index(line)
+                    players = lines[players_index + 1 : players_index + 5]
+                    # remove /t from the beginning of the line
+                    players = [player.strip() for player in players]
+
+                    for player in players:
+                        player = player.replace('"', "")
+                        # add them to the players_map     "Player 3": 4,
+                        player_name = player.split("|")[0]
+                        player_cards = int(player.split("|")[1])
+                        players_map[player_name] = player_cards
+
+                if "current_card =" in line:
+                    current_card = line.split("= ")[1].replace('"', "")
+
+            if "your_cards =" in data:
+                lines = [line.strip() for line in data.split("\n")]
+                cards_index = lines.index("your_cards =")
+                client_hand = [
+                    card.replace('"', "")
+                    for card in lines[cards_index + 1 :]
+                    if card and "Your turn" not in card
+                ]
 
         # Check if it's the player's turn
-        if turn == client_name:
-            printOptions()
+        if "Your turn" in data:
             printUI(players_map, client_name, client_hand, current_card, turn, True)
             player_choice = input("Enter your choice: ")
 
@@ -121,9 +149,9 @@ def game_loop(connection):
                 )  # Get the card to play from the user
                 data = connection.send(
                     [
-                        "Turn.take",
-                        f'card = "{card_to_play}"',
-                        "pick = false",
+                        "Turn.take\n",
+                        f'card = "{card_to_play}"\n',
+                        "pick = false\n",
                         "sudo = false",
                     ]
                 )
@@ -144,10 +172,7 @@ def game_loop(connection):
 
         else:
             printUI(players_map, client_name, client_hand, current_card, turn, False)
-            # Wait for game state change
-
-        # lil pause maybe send to the server end turn idk
-        time.sleep(2)
+        #     # Wait for game state change
 
 
 def lobby_end(data):
@@ -175,29 +200,29 @@ def lobby_end(data):
 
 
 def main():
-    while True:
-        handerGameInit()
+    handerGameInit()
 
-        # init server connection
-        # ip, port = handleGetServer()
-        connection = Connection("127.0.0.1", "6969")
+    # init server connection
+    # ip, port = handleGetServer()
+    connection = Connection("127.0.0.1", "6969")
 
-        # print welcome message from server
+    # print welcome message from server
+    # client_name = handleGetName()
+
+    # get the username as argument from the command line
+    if len(sys.argv) < 2:
         client_name = handleGetName()
-        response = connection.send(["Lobby.request", f'name = "{client_name}"'])
+    else:
+        client_name = sys.argv[1]
 
-        lobby_end(response)
+    response = connection.send(["Lobby.request", f'\nname = "{client_name}"'])
 
-        client_name = response.split('\n\tname="')[1].split('"\n')[0]
+    lobby_end(response)
 
-        lobby_loop(connection)
-        game_loop(connection)
-        # Play again?
-        if "y" == input("play again?"):
-            pass
-        else:
-            break
-    print("Done.")
+    client_name = response.split('\n\tname="')[1].split('"\n')[0]
+
+    lobby_loop(connection, client_name)
+    game_loop(connection)
 
 
 if __name__ == "__main__":
