@@ -59,6 +59,26 @@ namespace SudoUno {
                     string getCardEncoding() {
                         return ColorNames[color] + "|" + TypeNames[type];
                     };
+                    
+                    // Returns true if card c2 can be played on top of card c1
+                    static bool canPlace(Card c1, Card c2) {
+                        // Wild can be played on any card
+                        if (c2.getType() == CardType::wild || c2.getType() == CardType::wild4) {
+                            return true;
+                        }
+
+                        // Same type on same type
+                        if (c1.getType() == c2.getType()) {
+                            return true;
+                        }
+
+                        // Same colour on same colour
+                        if (c1.getColor() == c2.getColor()) {
+                            return true;
+                        }
+
+                        return false;
+                    }
             };
         }
 
@@ -88,22 +108,22 @@ namespace SudoUno {
                 // Removes a card from the player's hand if it exists
                 void removeCard(card::Card c) {
                     // Find the first occurrence of the card
-                    vector<card::Card>::iterator cardIterator = find(hand.begin(), hand.end(), c);
+                    vector<card::Card>::iterator iter = find(hand.begin(), hand.end(), c);
 
                     // Card is in player's hand, remove it
-                    if (cardIterator != hand.end()) {
-                        hand.erase(cardIterator);
+                    if (iter != hand.end()) {
+                        hand.erase(iter);
                     }
-                }
+                };
 
                 // Returns true if the specified card is in the player's hand
                 bool hasCard(card::Card c) {
                     // Find the first occurrence of the card
-                    vector<card::Card>::iterator cardIterator = find(hand.begin(), hand.end(), c);
+                    vector<card::Card>::iterator iter = find(hand.begin(), hand.end(), c);
 
                     // Was the card found?
-                    return cardIterator != hand.end();
-                }
+                    return iter != hand.end();
+                };
 
                 // Listens to the player's socket. Returns their response.
                 string listen() { return proto::recieveProtoMessage(sk);}
@@ -143,6 +163,14 @@ namespace SudoUno {
                 vector<Player> players;
                 Game(Player p, int i);
                 Player getCurrentPlayer() {return currentPlayer;};
+                Player getNextPlayer() {
+                    // Get the index of the current player and retrieve the player at index+1
+                    vector<Player>::iterator iter = find(players.begin(), players.end(), currentPlayer);
+                    if (iter != players.end()) {
+                        int index = iter - players.begin();
+                        return players[(index+1) % players.size()];
+                    }
+                }
                 void addPlayer(Player p) {
                     players.push_back(p);
                 }
