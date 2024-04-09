@@ -142,18 +142,22 @@ namespace SudoUno {
         void Game::TakeTurn(Player p, card::Card c, bool saidSudo, bool pickUp) {
             // Two valid actions: pick up a card from the deck, place a card from their hand
 
+            util::log(index, "Player " + p.getName() + " is taking a turn");
+
             // Player picks up a card from the deck
             if (pickUp) {
                 card::Card pickedCard = pullCard();
+                p.addCard(pickedCard);
+                util::log(index, "Player " + p.getName() + " picked up a " + pickedCard.getCardEncoding());
 
                 // Update player with the card that they picked up
-                p.addCard(pickedCard);
                 string msg = "turn.approve\n\tyour_cards =\n";
-                for (int i = 0; i < p.getHand().size(); i++) {
+                for (int i = 0; i < p.getHand().size(); i++) { // TODO: convert this to a helper function
                     msg += "\t\t\"" + p.getHand()[i].getCardEncoding() + "\"\n";
                 }
                 msg += ".fin\n";
                 p.sendToSocket(msg);
+                util::log(index, "Player " + p.getName() + " turn has ended");
                 return;
             }
 
@@ -164,6 +168,15 @@ namespace SudoUno {
             // }
 
             // Player wants to place a card from their hand
+            // Does the player have the card that they want to use?
+            if (!p.hasCard(c)) {
+                util::log(index, "Player " + p.getName() + " turn has ended");
+                string msg = "turn.reject\n\treason: \"You don't have a " + c.getCardEncoding() + "!\"\n.fin\n";
+                p.sendToSocket(msg);
+                return;
+            }
+
+
             // Check if the move is valid
             bool isValid = true; // TODO: return from helper function
             if (isValid) {
@@ -191,13 +204,13 @@ namespace SudoUno {
                     // Add two cards to the player's hand
                     p.addCard(pullCard());
                     p.addCard(pullCard());
-                    for (int i = 0; i < p.getHand().size(); i++) { // TODO: turn this into a helper function
+                    for (int i = 0; i < p.getHand().size(); i++) {
                         msg += "\t\t\"" + p.getHand()[i].getCardEncoding() + "\"\n";
                     }
                     msg += "\tYou forgot to say sudo.\n";
                 } 
                 else {
-                    for (int i = 0; i < p.getHand().size(); i++) { // TODO: move this to util?
+                    for (int i = 0; i < p.getHand().size(); i++) {
                         msg += "\t\t\"" + p.getHand()[i].getCardEncoding() + "\"\n";
                     }
                 }
@@ -205,8 +218,13 @@ namespace SudoUno {
                 msg += ".fin\n";
                 p.sendToSocket(msg);
             }
+            else {
+                string msg = "turn.reject\n\treason: \"!\"\n.fin\n";
+                p.sendToSocket(msg);
+            }
 
 
+            util::log(index, "Player " + p.getName() + " turn has ended");
         }
 
         vector<card::Card> Game::createDeck()

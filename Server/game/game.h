@@ -96,6 +96,15 @@ namespace SudoUno {
                     }
                 }
 
+                // Returns true if the specified card is in the player's hand
+                bool hasCard(card::Card c) {
+                    // Find the first occurrence of the card
+                    vector<card::Card>::iterator cardIterator = find(hand.begin(), hand.end(), c);
+
+                    // Was the card found?
+                    return cardIterator != hand.end();
+                }
+
                 // Listens to the player's socket. Returns their response.
                 string listen() { return proto::recieveProtoMessage(sk);}
 
