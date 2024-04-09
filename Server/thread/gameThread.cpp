@@ -198,8 +198,8 @@ namespace SudoUno {
 
                             // If there was an error extracting SUDO, or PICK, malformed!
                             if (saidSudo == -1 || chosePick == -1) {
-                                myGame->getCurrentPlayer().sendToSocket("turn.reject\n\treason: \"Your message was malformed.\"\n.fin\n");
-                                util::log(gameThreadIndex, "Their message was malformed.");
+                                myGame->getCurrentPlayer().sendToSocket("turn.reject\n\treason: \"You must include SUDO and PICK as booleans.\"\n.fin\n");
+                                util::log(gameThreadIndex, "Their booleans were corrupt.");
                                 continue;
                             }
 
@@ -207,18 +207,35 @@ namespace SudoUno {
                             if (cardInfo.size() != 2 && !chosePick) {
                                 // Something went wrong
                                 myGame->getCurrentPlayer().sendToSocket("turn.reject\n\treason: \"You did not provide correct card info. You must pick up a card if you cannot play one.\"\n.fin\n");
-                                util::log(gameThreadIndex, "Their message was malformed.");
+                                util::log(gameThreadIndex, "They did not provide correct card info and did not pick up.");
                                 continue;
 
                             // Their move is valid
                             } else {
-                                util::log(gameThreadIndex, "Their move: " + cardInfo[0] + "|" + cardInfo[1] + " " + (saidSudo ? "sudo, ": "") + (chosePick ? "picked up": ""));
+                                // Log their move
+                                if (cardInfo.size() == 2 ) {
+                                    // They placed a card
+                                    util::log(gameThreadIndex, "Their move: " + cardInfo[0] + "|" + cardInfo[1] + (saidSudo ? " and sudo": " no sudo"));
+                                } else {
+                                    // They are picking up a card
+
+                                    // Give them a new card
+                                    myGame->getCurrentPlayer().addCard(myGame->pullCard());
+
+                                    // Set the next player in the rotation to be the current player
+                                    
+
+                                    // Loop
+
+                                    util::log(gameThreadIndex, "They picked up card ");
+                                }
+
                             }
                         }
                         // If something goes wrong here
                         catch (string e) {
                             myGame->getCurrentPlayer().sendToSocket("turn.reject\n\treason: \"Your message was malformed.\"\n.fin\n");
-                            util::log(gameThreadIndex, "Their message was malformed.");
+                            util::log(gameThreadIndex, "Their message was malformed and raised an exception.");
                             continue;
                         }
 
