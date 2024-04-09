@@ -49,8 +49,6 @@ namespace SudoUno {
         }
 
         void Game::dealCards(Player p) {
-            // TODO: implement me!
-
             //Deal 7 cards to each player
             for (int i = 0; i < 7; i++) {
                 //Gets a card from the deck and adds it to the player's hand
@@ -59,18 +57,9 @@ namespace SudoUno {
         }
 
         card::Card Game::pullCard() {
-            // TODO: implement me!
-
-            //Pull a card from the deck
-            std::vector<card::Card> deck;
-
-            //Get card from deck at random
-            int cardIndex = rand() % deck.size();
-            card::Card c = deck[cardIndex];
-            //Remove from deck
-            deck.erase(deck.begin() + cardIndex);
-            //Return card
-            return c;
+            card::Card topCard = cards.back();
+            cards.pop_back();
+            return topCard;
         }
 
         void Game::Start() {
@@ -106,15 +95,16 @@ namespace SudoUno {
             //give 7 to each player
             //loop through all four players
             int position;
-             for (int i = 0; i < 4; i++){
+            for (int i = 0; i < 4; i++){
                 //give seven cards
                 dealCards(players[i]);
             }
-            util::log(index, "Cards dealt");
+            util::log(index, "Cards dealt to players");
 
             //one to be top of deck card
             //is this just checked by checking the top of the array?
-            //currentCard = 
+            currentCard = pullCard();
+            util::log(index, "Top card set!");
 
             // -- Set game state to PLAYING -- //
             state = playing;
