@@ -5,6 +5,10 @@
 namespace SudoUno {
     namespace sudoThreads {
 
+        void updateGameState(game::Game* myGame) {
+            // TODO: Implement me!
+        }
+
         void gameThreadFunction(int gameThreadIndex) {
 
             game::Game* myGame = &game::gamesVect[gameThreadIndex];

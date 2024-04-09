@@ -110,6 +110,7 @@ namespace SudoUno {
                 vector<card::Card> cards;
                 GameState state;
                 int index;
+                card::Card currentCard;
             public:
                 vector<Player> players;
                 Game(Player p, int i);

@@ -40,7 +40,10 @@ namespace SudoUno {
             {finished, "Finished"}
         };
 
-        Game::Game(Player p, int i) : currentPlayer(p), state(GameState::waiting){
+        Game::Game(Player p, int i) : currentPlayer(p),
+            state(GameState::waiting),
+            currentCard(card::Card((card::CardColor)0, (card::CardType)0))
+        {
             addPlayer(p);
             index = i;
         }
@@ -100,7 +103,8 @@ namespace SudoUno {
 
             //one to be top of deck card
             //is this just checked by checking the top of the array?
-            
+            //currentCard = 
+
             // -- Set game state to PLAYING -- //
             state = playing;
         }
