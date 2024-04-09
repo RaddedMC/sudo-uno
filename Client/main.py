@@ -14,8 +14,9 @@ from utils.logger import (
     handleJoinedGame,
     handerGameInit,
     handleGetServer,
+    printUI,
 )
-from utils.connection import Connection
+from utils.connection import Connection 
 
 import os
 
@@ -25,7 +26,7 @@ def clear_terminal():
     os.system("cls" if os.name == "nt" else "clear")
 
 
-# Player name and number of cards in hand
+# Player and game state
 players_map = {
     "Player 1": 6,
     "Player 2": 5,
@@ -43,68 +44,83 @@ client_hand = [
 ]
 current_card = "Yellow|9"
 turn = "Player1"
+client_name = "Player1"
 
 
 def lobby_loop():
-    # Lobby
+    dots = 0
+    i = 0 #temp variable
+    # Lobby Loop (checks server every itteration to see if it should start the game)
     while True:
         clear_terminal()
-        waitingForLobby()
+        
+        dots = waitingForLobby(dots)
         # Check if the game has started
-        if True:
+        #if con.lobby() returns True handleJoining a game
+        #con.lobby() returns a boolean of wether or not the client is in a game with 4 players
+        #nPlayers = con.lobby()
+        nPlayers = 0
+        print(f"({nPlayers}/4) players")
+        if i > 3: #4 == nPlayers
             handleJoinedGame()
             break
+        else:
+            i=i+1
+        time.sleep(1)
+        
 
 
-def game_loop(turn, client_name, players_map, client_hand, current_card):
+def game_loop():
     # Game loop
     while True:
         # Clear terminal
         clear_terminal()
+        
+        # Update game state
+        #TODO: con. function to get the players_map object
+        #TODO: con. function to get the client_hand array
+        #TODO: con. function to get the current_card string
+        #TODO: con. function to get the current_card string
+        #TODO: con. function to get the current_card string
 
         # Check if it's the player's turn
         if turn == client_name:
-            print("SUDO UNO Game!")
-            printOpponentsHand(players_map, client_name)
-            printHand(client_hand)
-            printTopcard(current_card)
-            printTurn(turn, True)
-            printOptions(["Play a card", "Draw a card", "Call UNO"])
+            printOptions()
+            printUI(players_map,client_name,client_hand,current_card,turn,True)          
             player_choice = input("Enter your choice: ")
-
+            # Process player choice on the server
+            # TODO: Implement code here..
+            # Update game state for the 3 globle variables below
             handlePlayerChoice(player_choice, client_hand, client_name)
-            # Process player choice
-            if player_choice == "1":
-                # Clear terminal after player plays a card
-                time.sleep(10)
-                clear_terminal()
-
+            
         else:
-            print("SUDO UNO Game!")
-            printOpponentsHand(players_map, client_name)
-            printHand(client_hand)
-            printTopcard(current_card)
-            printTurn(turn, False)
-            printOptions(["Play a card", "Draw a card", "Call SUDO"])
-
+            printUI(players_map,client_name,client_hand,current_card,turn,False)          
             # Wait for game state change
-            time.sleep(1)
 
-        # Update game state
-        # lil pause
-        time.sleep(10)
+        # lil pause maybe send to the server end turn idk
+        time.sleep(2)
 
 
 if __name__ == "__main__":
-    handerGameInit()
+    #Play again loop
+    while(True):
+        handerGameInit()
 
-    ip, port = handleGetServer()
-    connection = Connection(ip, port)
-    # print welcome message from server
+        #init server connection
+        ip, port = handleGetServer()
+        connection = Connection(ip, port)
 
-    client_name = handleGetName()
-    client_name = 'name = "' + client_name + '"'
-    connection.send(client_name)
+        # print welcome message from server
+        client_name = handleGetName()
+        client_name = 'name = "' + client_name + '"'
+        connection.send(client_name)
 
-    # lobby_loop()
-    # game_loop(turn, client_name, players_map, client_hand, current_card)
+        
+        lobby_loop(connection)
+        game_loop(connection)
+        #Play again?
+        if ("y" == input("play again?")):
+            pass
+        else:
+            break
+    print("Done.")
