@@ -4,6 +4,7 @@
 
 namespace SudoUno {
     namespace sudoThreads {
+
         void gameThreadFunction(int gameThreadIndex) {
 
             game::Game* myGame = &game::gamesVect[gameThreadIndex];
@@ -57,10 +58,43 @@ namespace SudoUno {
                     lastPlayers = currentPlayers;
                 }
 
+                // Now, check if the lobby is full
+                if (currentPlayers == 4) {
+                    break;
+                }
+
                 // We ideallly don't need to recheck this all the time
                 // Check every 50 ms
-                usleep(500000);
+                usleep(500000); // TODO: If players join too quickly I don't think they will all be added
             }
+
+            // The lobby is now full!
+
+            // Notify everyone and prepare the game...
+
+            for (int playerNum = 0; playerNum < 4; playerNum++) {
+
+                string msg = "lobby.start\n\tname = \"" + myGame->players[playerNum].getName() + "\"\n\tplayers =";
+
+                // lobby.start
+                //     name = "yourname"
+                //     players =
+                //         "player1"
+                //         "player2"
+                //         "player3"
+                // .fin
+                for (int i = 0; i < 4; i++) {
+                    if (i != playerNum) {
+                        msg += "\n\t\"" + myGame->players[i].getName() + "\"";
+                    }
+                }
+
+                myGame->players[playerNum].sendToSocket(msg + "\n.fin");
+            }
+
+            // Game is now started!
+
+            myGame->Start();
         }
     }
 }
