@@ -103,7 +103,7 @@ def printHand(hand):
     
 def printHand2(hand):
     """Prints the player's hand of cards."""
-    print("Your hand:")
+    print("Your hand:\n")
     for i, card in enumerate(hand, start=1):
         color, type = card.split("|")
         color_code = color_codes.get(color, Fore.RESET)
@@ -135,31 +135,29 @@ def printOptions():
     for i, option in enumerate(options, start=1):
         print(f"{i}. {option}")
         
-def handlePlayerChoice(choice, hand, client_name):
-    if choice == "1":
-        printHand2(hand)
-        card_index = int(input("Enter the number corresponding to the card you want to play: "))
-        if 1 <= card_index <= len(hand):
-            played_card = hand[card_index - 1]
-            color, type = played_card.split("|")
-            color_code = color_codes.get(color, Fore.RESET)
-            print(f"You played {color_code}{color}|{type}{Style.RESET_ALL}")
-            # Add logic to update game state with the played card
-        else:
-            print("Invalid card number. Please try again.")
-        
-        # Add logic to update game state with the played card
-    elif choice == "2":
-        drawn_card = "Red|5"  # Replace with actual drawn card
-        color, type = drawn_card.split("|")
+def handlePlayerChoice1(hand):
+    printHand2(hand)
+    card_index = int(input("Enter the number corresponding to the card you want to play: "))
+    if 1 <= card_index <= len(hand):
+        played_card = hand[card_index - 1]
+        color, type = played_card.split("|")
         color_code = color_codes.get(color, Fore.RESET)
-        print(f"You drew {color_code}{color}|{type}{Style.RESET_ALL}")
-        # Add logic to update game state with the drawn card
-    elif choice == "3":
-        print(f"{Fore.RED}{Style.BRIGHT}{client_name} called SUDO!{Style.RESET_ALL}")
-        # Add logic to handle UNO call
+        print(f"You played {color_code}{color}|{type}{Style.RESET_ALL}")
+        # Add logic to update game state with the played card
+        return played_card
     else:
-        print("Invalid choice. Please try again.")
+        print("Invalid card number. Please try again.")
+        return "null"
+
+def handlePlayerChoice2(drawn_card):
+    color, type = drawn_card.split("|")
+    color_code = color_codes.get(color, Fore.RESET)
+    print(f"You drew {color_code}{color}|{type}{Style.RESET_ALL}")
+    
+def handlePlayerChoice3(client_name):
+    print(f"{Fore.RED}{Style.BRIGHT}{client_name} called SUDO!{Style.RESET_ALL}")
+    
+    print("Invalid choice. Please try again.")
         
 def handerGameInit():
     #Add logo 

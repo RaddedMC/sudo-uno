@@ -8,7 +8,9 @@ from utils.logger import (
     printTopcard,
     printTurn,
     printOptions,
-    handlePlayerChoice,
+    handlePlayerChoice1,
+    handlePlayerChoice2,
+    handlePlayerChoice3,
     handleGetName,
     waitingForLobby,
     handleJoinedGame,
@@ -70,21 +72,21 @@ def lobby_loop(connection, client_name):
             print("The game has started!")
 
             game_loop(connection, client_name)
-            # player_names = [
-            #     line.split("= ")[1].strip("“”")
-            #     for line in data.split("\n")
-            #     if "name" in line
-            # ]
-            # if client_name in player_names and len(player_names) == 4:
-            #     handleJoinedGame()
-            #     break
+            #TODO: maybe debug the wating room animation 
+        #     player_names = [
+        #         line.split("= ")[1].strip("“”")
+        #         for line in data.split("\n")
+        #         if "name" in line
+        #     ]
+        #     if client_name in player_names and len(player_names) == 4:
+        #         handleJoinedGame()
+        #         break
 
         # else:
         #     waitingForLobby(dots)
         #     dots += 1
         #     if dots > 3:
         #         dots = 1
-        # time.sleep(1)
 
 
 def game_loop(connection, client_name):
@@ -139,14 +141,21 @@ def game_loop(connection, client_name):
             printUI(players_map, client_name, client_hand, current_card, turn, True)
             player_choice = input("Enter your choice: ")
 
-            if player_choice == "1":  # Assume "1" means pick up a card
+            if player_choice == "2":  # Assume "2" means pick up a card
                 data = connection.send(
                     ["Turn.take", 'card = ""', "pick = true", "sudo = false"]
                 )
-            elif player_choice == "2":  # Assume "2" means place down a card
-                card_to_play = input(
-                    "Enter the card to play: "
-                )  # Get the card to play from the user
+                #TODO add logic to handle mapping the drawn card: 
+                #--------------------------------------
+                drawn_card = "Red|5"
+                #--------------------------------------
+
+                #Update ui to show what card got drawn
+                handlePlayerChoice2(drawn_card)
+            elif player_choice == "1":  # Assume "1" means place down a card
+                #Get card to play from array given number returns card string
+                #TODO: note if the card is not in hand will return "null" add logic server side to handle edge case
+                card_to_play = handlePlayerChoice1(client_hand)
                 data = connection.send(
                     [
                         "Turn.take\n",
@@ -155,24 +164,43 @@ def game_loop(connection, client_name):
                         "sudo = false",
                     ]
                 )
-
+            elif player_choice == "3": 
+                if len(client_hand) == 2:
+                    handlePlayerChoice3(client_name)
+                    card_to_play = handlePlayerChoice1(client_hand)
+                    #TODO: note if the card is not in hand will return "null" add logic server side to handle edge case
+                    data = connection.send(
+                        [
+                            "Turn.take\n",
+                            f'card = "{card_to_play}"\n',
+                            "pick = false\n",
+                            "sudo = true",
+                        ]
+                    )
+                else:
+                    print("You can only call sudo when you have 2 cards left. Please try again.")
+                    pass
+            
             lobby_end(data)
 
             # Handle server response
             if "Turn.approve" in data:
                 print("Your turn was approved.")
                 if "You forgot to say sudo." in data:
-                    print("You forgot to say sudo.")
+                    print("You forgot to say sudo draw 2.")
+                #time.sleep(2) # Wait for 2 seconds then clear the display
+                clear_terminal()
+
             elif "Turn.reject" in data:
                 reason = data.split("reason: ")[1]
                 print(f"Your turn was rejected. Reason: {reason}")
+                #time.sleep(2) # Wait for 2 seconds then clear the display
+                clear_terminal()
 
-            # Update game state for the 3 global variables below
-            handlePlayerChoice(player_choice, client_hand, client_name)
 
         else:
             printUI(players_map, client_name, client_hand, current_card, turn, False)
-        #     # Wait for game state change
+            # Wait for game state change
 
 
 def lobby_end(data):
@@ -206,8 +234,7 @@ def main():
     # ip, port = handleGetServer()
     connection = Connection("127.0.0.1", "6969")
 
-    # print welcome message from server
-    # client_name = handleGetName()
+    #print welcome message from server
 
     # get the username as argument from the command line
     if len(sys.argv) < 2:
