@@ -163,9 +163,7 @@ namespace SudoUno {
             // Game is now started!
             myGame->Start();
 
-            // 0 = playing
-            // TODO: how the hell do I reference an enum as a value in C++?!?!?!
-            while (myGame->getState() == 0) {
+            while (myGame->getState() == game::GameState::playing) {
                 // Update the state for the players
                 updateGameState(myGame, gameThreadIndex);
 
