@@ -143,7 +143,7 @@ def game_loop(connection, client_name):
 
             if player_choice == "2":  # Assume "2" means pick up a card
                 data = connection.send(
-                    ["Turn.take", 'card = ""', "pick = true", "sudo = false"]
+                    ["Turn.take\n", 'card = ""\n', "pick = true\n", "sudo = false"]
                 )
                 #TODO add logic to handle mapping the drawn card: 
                 #--------------------------------------
