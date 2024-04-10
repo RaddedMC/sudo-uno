@@ -41,8 +41,8 @@ namespace SudoUno {
                 wild
             };
 
-            CardType NumberTypes[10] = {zero, one, two, three, four, five, six, seven, eight, nine};
-            CardType ActionTypes[5] = {rev, skip, pltwo, wild4, wild};
+            extern CardType NumberTypes[10];
+            extern CardType ActionTypes[5] ;
 
             extern map<CardType, string> TypeNames;
 
@@ -94,6 +94,10 @@ namespace SudoUno {
                         auto iter = find(begin(ActionTypes), end(ActionTypes), this->getType());
                         return iter != end(ActionTypes);
                     }
+
+                    bool operator==(const Card& other) {
+                        return (color == other.color) && (type == other.type);
+                    }
             };
 
             Card parseCardFromString(string colorString, string typeString);
@@ -136,10 +140,13 @@ namespace SudoUno {
                 // Returns true if the specified card is in the player's hand
                 bool hasCard(card::Card c) {
                     // Find the first occurrence of the card
-                    vector<card::Card>::iterator iter = find(hand.begin(), hand.end(), c);
-
-                    // Was the card found?
-                    return iter != hand.end();
+                    for (int i = 0; i < hand.size(); i++) {
+                        cout << "Comparing " << c.getCardEncoding() << " to " << hand[i].getCardEncoding() << endl;
+                        if (c.getColor() == hand[i].getColor() && c.getType() == hand[i].getType()) {
+                            return true;
+                        }
+                    }
+                    return false;
                 };
 
                 // Listens to the player's socket. Returns their response.
@@ -159,6 +166,11 @@ namespace SudoUno {
                 vector<card::Card> getHand() {
                     return hand;
                 }
+
+                bool operator==(const Player& other) {
+                    // Players are only the same if their mem address matches
+                    return this == &other;
+                }
         };
 
         enum GameState {
@@ -176,21 +188,15 @@ namespace SudoUno {
                 GameState state;
                 int index;
                 card::Card currentCard;
+                int currentPlayerIndex;
+                bool isPlayerOrderForward;
             public:
                 vector<Player> players;
                 Game(Player p, int i);
                 Player getCurrentPlayer() {return currentPlayer;};
-                Player getNextPlayer() {
-                    // Get the index of the current player and retrieve the player at index+1
-                    vector<Player>::iterator iter = find(players.begin(), players.end(), currentPlayer);
-                    if (iter != players.end()) {
-                        int index = iter - players.begin();
-                        return players[(index+1) % players.size()];
-                    }
-                    else { // This should never happen
-                        string msg = currentPlayer.getName() + " could not be found in the players vector";
-                        throw msg;
-                    }
+                void getNextPlayer() {
+                    currentPlayerIndex = (isPlayerOrderForward ? (currentPlayerIndex + 1) : (currentPlayerIndex - 1)) % 4;
+                    currentPlayer = players[currentPlayerIndex];
                 }
                 void addPlayer(Player p) {
                     players.push_back(p);
@@ -199,7 +205,7 @@ namespace SudoUno {
                 card::Card pullCard();
                 void Start();
                 void End(string reason);
-                void TakeTurn(Player p, card::Card c, bool saidSudo, bool pickUp);
+                bool TakeTurn(card::Card c, bool saidSudo, bool pickUp);
                 int getNumPlayers() {return players.size();}
                 vector<card::Card> createDeck();
                 GameState getState() {return state;}

@@ -184,7 +184,7 @@ namespace SudoUno {
                     if (lowercaseMove.find("turn.take") != string::npos) {
                         // They said 'turn.take'
                         // We need to ensure that they include "card, pick, sudo"
-                        try {
+                        // try {
                             // Extract their card, if present
                             vector<string> cardInfo = proto::retrievePairedLineItem("card", nextMove);
 
@@ -210,16 +210,25 @@ namespace SudoUno {
 
                             // Their move is valid
                             } else {
-
-                                myGame->TakeTurn(myGame->getCurrentPlayer(), game::card::parseCardFromString(cardInfo[0], cardInfo[1]), saidSudo, chosePick);
+                                if (cardInfo.size() == 2) {
+                                    if(myGame->TakeTurn(game::card::parseCardFromString(cardInfo[0], cardInfo[1]), saidSudo, chosePick)) {
+                                        // Turn successful. We can continue!
+                                        break;
+                                    }
+                                } else {
+                                    if(myGame->TakeTurn(game::card::Card((game::card::CardColor)0, (game::card::CardType)0), saidSudo, chosePick)) {
+                                        // Turn successful. We can continue!
+                                        break;
+                                    }
+                                }
                             }
-                        }
+                        // }
                         // If something goes wrong here
-                        catch (string e) {
-                            myGame->getCurrentPlayer().sendToSocket("turn.reject\n\treason: \"Your message was malformed.\"\n.fin\n");
-                            util::log(gameThreadIndex, "Their message was malformed and raised an exception.");
-                            continue;
-                        }
+                        // catch (string e) {
+                        //     myGame->getCurrentPlayer().sendToSocket("turn.reject\n\treason: \"Your message was malformed.\"\n.fin\n");
+                        //     util::log(gameThreadIndex, "Their message was malformed and raised an exception.");
+                        //     continue;
+                        // }
 
                     } else {
                         // They have malformed their message.
