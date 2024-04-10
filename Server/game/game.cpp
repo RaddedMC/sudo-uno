@@ -139,11 +139,10 @@ namespace SudoUno {
             //Add additional code to close the server thread if done here
         }
 
-        // TODO: is there a reason why player is an arg? Wouldn't that just be the same as currentPlayer?
         void Game::TakeTurn(Player p, card::Card c, bool saidSudo, bool pickUp) {
             // Two valid actions: pick up a card from the deck, place a card from their hand
 
-            util::log(index, "Player " + p.getName() + " is taking their turn");
+            util::log(index, "Player " + p.getName() + " has started their turn");
 
             // Player picks up a card from the deck
             if (pickUp) {
@@ -163,7 +162,7 @@ namespace SudoUno {
             }
 
             // Player wants to place a card from their hand
-            
+
             // Does the player have the card that they want to use?
             if (!p.hasCard(c)) {
                 util::log(index, "Player " + p.getName() + " tried to place a " + c.getCardEncoding() + " but this card is not in their hand!");                
@@ -181,35 +180,74 @@ namespace SudoUno {
                 p.removeCard(c);
                 currentCard = c;
 
-                // Perform the card's action
+                // Perform the action associated with the card if it's an action card
+                if (c.isAction()) {
+                    card::CardType type = c.getType();
 
-                // TODO: how going to handle reverse card?
+                    // Next player gets +4 cards
+                    if (type == card::CardType::wild4) {
+                        Player nextPlayer = getNextPlayer();
+                        for (int i = 0; i < 4; i++) {
+                            nextPlayer.addCard(pullCard());
+                        }
+                    }
 
+                    // Next player gets +2 cards
+                    if (type == card::CardType::pltwo) {
+                        Player nextPlayer = getNextPlayer();
+                        for (int i = 0; i < 2; i++) {
+                            nextPlayer.addCard(pullCard());
+                        }
+                    }
+
+                    // Reverse direction of play
+                    if (type == card::CardType::rev) {
+                        reverse(players.begin(), players.end());
+                        currentPlayer = getNextPlayer();
+                    }
+
+                    // Skip next player's turn
+                    if (type == card::CardType::skip) {
+                        getNextPlayer();
+                        currentPlayer = getNextPlayer();
+                    }
+                }
+                else if (c.isNumber()) {
+                    // Move control to next player
+                    currentPlayer = getNextPlayer();
+                }
+                else { // This should never happen
+                    string err = c.getCardEncoding() + " is neither a number card nor an action card";
+                    throw err;
+                }
 
                 // Was this the player's last card?
                 if (p.getHand().size() == 0) {
+                    util::log(index, "Player " + p.getName() + " placed down their last card (" + c.getCardEncoding() + ")");
                     // Player wins, end the game
                     End(p.getName());
                     return;
                 }
 
+                util::log(index, "Player " + p.getName() + " placed down a " + c.getCardEncoding());
+
                 // Did the player place down their second-last card without saying SUDO?
                 if (p.getHand().size() == 1 && !saidSudo) {
                     // Add two cards to the player's hand
-                    p.addCard(pullCard());
-                    p.addCard(pullCard());
+                    for (int i = 0; i < 2; i++) {
+                        p.addCard(pullCard());                        
+                    }
                     msg += "\tYou forgot to say sudo.\n";
+                    util::log(index, "Player " + p.getName() + " didn't say SUDO - two cards were added to their hand");
                 } 
 
                 msg += ".fin\n";
                 p.sendToSocket(msg);
                 util::log(index, "Player " + p.getName() + " turn has ended");
-
-                // Move control to next player
-                currentPlayer = getNextPlayer();
                 util::log(index, "Next turn: Player " + currentPlayer.getName());                
             }
             else {
+                util::log(index, "Player " + p.getName() + " made an invalid move (" + c.getCardEncoding() + " ==> " + currentCard.getCardEncoding() + ")");
                 string msg = "turn.reject\n\treason: \"A " + c.getCardEncoding() + " cannot be played on top of a " + currentCard.getCardEncoding() + "\"\n.fin\n";
                 p.sendToSocket(msg);
             }

@@ -41,6 +41,9 @@ namespace SudoUno {
                 wild
             };
 
+            CardType NumberTypes[10] = {zero, one, two, three, four, five, six, seven, eight, nine};
+            CardType ActionTypes[5] = {rev, skip, pltwo, wild4, wild};
+
             extern map<CardType, string> TypeNames;
 
             class Card {
@@ -78,6 +81,18 @@ namespace SudoUno {
                         }
 
                         return false;
+                    }
+
+                    // Returns true if this card is a number card
+                    bool isNumber() {
+                        auto iter = find(begin(NumberTypes), end(NumberTypes), this->getType());
+                        return iter != end(NumberTypes);
+                    }
+
+                    // Returns true if this card is an action card
+                    bool isAction() {
+                        auto iter = find(begin(ActionTypes), end(ActionTypes), this->getType());
+                        return iter != end(ActionTypes);
                     }
             };
         }
@@ -169,6 +184,10 @@ namespace SudoUno {
                     if (iter != players.end()) {
                         int index = iter - players.begin();
                         return players[(index+1) % players.size()];
+                    }
+                    else { // This should never happen
+                        string msg = currentPlayer.getName() + " could not be found in the players vector";
+                        throw msg;
                     }
                 }
                 void addPlayer(Player p) {
