@@ -100,21 +100,14 @@ namespace SudoUno {
             //make deck
             //make vector to hold all cards
             util::log(index, "Game started!");
-            vector<card::Card> decktor = createDeck();
+            cards = createDeck();
             util::log(index, "Deck created");
-
-            //game has a cards field- assign old vector to this
-            cards = decktor;
-
-            //get all players 
-            // vector<Player> gamePlayers = players;
 
             //create turn order- will reassign to game with new player order so other
             //methods can just use players
 
             //if this doesn't work, std::shuffle <- this requires a random generator, need to import more stuff
             //shuffle all players, from start to end of vector
-            // random_shuffle(gamePlayers.begin(), gamePlayers.end());
             random_shuffle(players.begin(), players.end());
             util::log(index, "Player order set");
 
