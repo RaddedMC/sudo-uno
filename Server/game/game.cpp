@@ -75,6 +75,7 @@ namespace SudoUno {
             index = i;
             isPlayerOrderForward = true;
             currentPlayerIndex = 0;
+            isSkipPlayed = false;
         }
 
         // Deals 7 cards to a player.
@@ -113,7 +114,6 @@ namespace SudoUno {
 
             // players = gamePlayers;
             currentPlayer = &players[0];
-            cout << currentPlayer->getHand().size();
             
             //shuffle cards, 
             random_shuffle(cards.begin(), cards.end());
@@ -197,7 +197,7 @@ namespace SudoUno {
                 util::log(index, "Player " + currentPlayer->getName() + " turn has ended");
 
                 // Move control to next player
-                getNextPlayer();
+                moveToNextPlayer();
                 util::log(index, "Next turn: Player " + currentPlayer->getName());
                 return true;
             }
@@ -227,20 +227,20 @@ namespace SudoUno {
 
                     // Next player gets +4 cards
                     if (type == card::CardType::wild4) {
-                        getNextPlayer();
-                        util::log(index, "+4 cards to " + currentPlayer->getName());
+                        Player* next = getNextPlayer();
+                        util::log(index, "Added +4 cards to " + next->getName());
                         util::log(index, "Colour is now " + card::ColorNames[c.getColor()]);
                         for (int i = 0; i < 4; i++) {
-                            currentPlayer->addCard(pullCard());
+                            next->addCard(pullCard());
                         }
                     }
 
                     // Next player gets +2 cards
                     if (type == card::CardType::pltwo) {
-                        getNextPlayer();
-                        util::log(index, "+2 cards to " + currentPlayer->getName());
+                        Player* next = getNextPlayer();
+                        util::log(index, "Added +2 cards to " + next->getName());
                         for (int i = 0; i < 2; i++) {
-                            currentPlayer->addCard(pullCard());
+                            next->addCard(pullCard());
                         }
                     }
 
@@ -248,26 +248,24 @@ namespace SudoUno {
                     if (type == card::CardType::rev) {
                         isPlayerOrderForward = !isPlayerOrderForward;
                         util::log(index, *"Player order is " + (isPlayerOrderForward ? "forward" : "reversed"));
-                        getNextPlayer();
                     }
 
                     // Skip next player's turn
                     if (type == card::CardType::skip) {
-                        getNextPlayer();
-                        util::log(index, "Skipped " + currentPlayer->getName() + "'s turn");
-                        getNextPlayer();
+                        isSkipPlayed = true;
+                        Player* next = getNextPlayer();
+                        util::log(index, "Skipping " + next->getName() + "'s turn");
+                    } else {
+                        isSkipPlayed = false;
                     }
 
                     // Log on colour change
                     if (type == card::CardType::wild) {
-                        getNextPlayer();
                         util::log(index, "Colour is now " + card::ColorNames[c.getColor()]);
                     }
                 }
                 else if (c.isNumber()) {
-                    // Move control to next player
                     util::log(index, "Played a number card");
-                    getNextPlayer();
                 }
                 else { // This should never happen
                     string err = c.getCardEncoding() + " is neither a number card nor an action card";
@@ -297,6 +295,11 @@ namespace SudoUno {
                 msg += ".fin\n";
                 currentPlayer->sendToSocket(msg);
                 util::log(index, "Player " + currentPlayer->getName() + " turn has ended");
+                // Move control to next player (or next next player if a skip was played)
+                moveToNextPlayer();
+                if (isSkipPlayed) {
+                    moveToNextPlayer();
+                }
                 util::log(index, "Next turn: Player " + currentPlayer->getName());      
                 return true;          
             }

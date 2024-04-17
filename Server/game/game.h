@@ -190,13 +190,18 @@ namespace SudoUno {
                 card::Card currentCard;
                 int currentPlayerIndex;
                 bool isPlayerOrderForward;
+                bool isSkipPlayed;
             public:
                 vector<Player> players;
                 Game(Player p, int i);
                 Player* getCurrentPlayer() {return currentPlayer;};
-                void getNextPlayer() {
+                void moveToNextPlayer() {
                     currentPlayerIndex = (isPlayerOrderForward ? (currentPlayerIndex + 1) : (currentPlayerIndex - 1)) % 4;
                     currentPlayer = &players[currentPlayerIndex];
+                }
+                Player* getNextPlayer() {
+                    int nextPlayerIndex = (isPlayerOrderForward ? (currentPlayerIndex + 1) : (currentPlayerIndex - 1)) % 4;
+                    return &players[nextPlayerIndex];
                 }
                 void addPlayer(Player p) {
                     players.push_back(p);
