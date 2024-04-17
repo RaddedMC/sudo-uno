@@ -183,7 +183,7 @@ namespace SudoUno {
 
         class Game {
             private:
-                Player currentPlayer;
+                Player *currentPlayer;
                 vector<card::Card> cards;
                 GameState state;
                 int index;
@@ -193,10 +193,10 @@ namespace SudoUno {
             public:
                 vector<Player> players;
                 Game(Player p, int i);
-                Player getCurrentPlayer() {return currentPlayer;};
+                Player* getCurrentPlayer() {return currentPlayer;};
                 void getNextPlayer() {
                     currentPlayerIndex = (isPlayerOrderForward ? (currentPlayerIndex + 1) : (currentPlayerIndex - 1)) % 4;
-                    currentPlayer = players[currentPlayerIndex];
+                    currentPlayer = &players[currentPlayerIndex];
                 }
                 void addPlayer(Player p) {
                     players.push_back(p);
