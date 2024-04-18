@@ -212,6 +212,7 @@ namespace SudoUno {
                 void End(string reason);
                 bool TakeTurn(card::Card c, bool saidSudo, bool pickUp);
                 int getNumPlayers() {return players.size();}
+                vector<card::Card> refreshDeck();
                 vector<card::Card> createDeck();
                 GameState getState() {return state;}
                 card::Card getCurrentCard() {return currentCard;}

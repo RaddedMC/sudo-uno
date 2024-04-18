@@ -89,6 +89,14 @@ namespace SudoUno {
 
         // Returns the topmost card from the deck.
         card::Card Game::pullCard() {
+            // Deck is empty, make a new one
+            if (cards.size() == 0) {
+                util::log(index, "No cards left in the deck, making a new one...");
+                cards = refreshDeck();
+                util::log(index, "Deck refreshed (" + to_string(cards.size()) + " cards available)");
+            }
+
+            // Remove and return the topmost card from the deck
             card::Card topCard = cards.back();
             cards.pop_back();
             return topCard;
@@ -184,6 +192,7 @@ namespace SudoUno {
             // Two valid actions: pick up a card from the deck, place a card from their hand
 
             util::log(index, "Player " + currentPlayer->getName() + " has entered their turn");
+            util::log(index, "Num of cards in deck: " + to_string(cards.size()));
 
             // Player picks up a card from the deck
             if (pickUp) {
@@ -309,6 +318,78 @@ namespace SudoUno {
                 currentPlayer->sendToSocket(msg);
                 return false;
             }
+        }
+
+        // Creates a shuffled deck that excludes the cards that are already in play
+        vector<card::Card> Game::refreshDeck() {
+            // TODO: regenerate/reshuffle deck based on cards that are not in play (top card or player hands)
+
+            // Which cards are already in play?
+            vector<card::Card> cardsInPlay;
+            cardsInPlay.push_back(currentCard);
+            for (int i = 0; i < players.size(); i++) {
+                vector<card::Card> hand = players[i].getHand();
+                for (int j = 0; j < hand.size(); j++) {
+                    cardsInPlay.push_back(hand[j]);
+                }
+            }
+
+            util::log(index, "There are " + to_string(cardsInPlay.size()) + " cards in play");
+
+            vector<card::Card> newDeck;
+
+            // Loop over each of the 4 colors
+            for (int i = 0; i < 4; i++) {
+                // Loop over each of the 13 types
+                for (int j = 0; j < 13; j++) {
+                    //(card::CardColor)i <- casting i to CardColor enum
+                    auto possibleCard = card::Card((card::CardColor)i, (card::CardType)j);
+
+                    if (find(cardsInPlay.begin(), cardsInPlay.end(), possibleCard) != cardsInPlay.end()) {
+                        // Card is already in play; if there is only one occurrence of this card and it is not 0, add it to the deck
+                        int numCards = count(cardsInPlay.begin(), cardsInPlay.end(), possibleCard);
+                        cout << "OCCURRENCES: " << numCards << endl; // DEBUG
+                        if (numCards == 1 && j != 0) {
+                            newDeck.push_back(possibleCard);
+                        }
+                    } else {
+                        // Card is not in play; if it is not 0 add two copies to the deck
+                        newDeck.push_back(possibleCard);
+                        if (j != 0) {
+                            newDeck.push_back(possibleCard);
+                        }
+                    }
+                }
+            }
+
+            // Add 4 wild and 4 wild4 cards to the deck
+            for (int i = 0; i < 4; i++)
+            {
+                // WILD
+                auto possibleCard = card::Card(card::black, card::wild);
+
+                int numCards = count(cardsInPlay.begin(), cardsInPlay.end(), possibleCard);
+                cout << "OCCURRENCES WILD: " << numCards << endl; // DEBUG
+                
+                for (int j = numCards; j < 4; j++) {
+                    newDeck.push_back(possibleCard);
+                }
+
+                // WILD +4
+                possibleCard = card::Card(card::black, card::wild4);
+
+                numCards = count(cardsInPlay.begin(), cardsInPlay.end(), possibleCard);
+                cout << "OCCURRENCES WILD +4: " << numCards << endl; // DEBUG
+                
+                for (int j = numCards; j < 4; j++) {
+                    newDeck.push_back(possibleCard);
+                }
+            }
+
+            // Shuffle the deck
+            random_shuffle(cards.begin(), cards.end());
+            util::log(index, "Shuffled new deck");
+            return newDeck;
         }
 
         // Creates the card deck and shuffles it.
