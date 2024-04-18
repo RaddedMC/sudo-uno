@@ -183,6 +183,9 @@ def process_game_state(data):
                 # remove /t from the beginning of the line
                 players = [player.strip() for player in players]
 
+                # reset the players_map
+                players_map = {}
+
                 for player in players:
                     player = player.replace('"', "")
                     # add them to the players_map     "Player 3": 4,
