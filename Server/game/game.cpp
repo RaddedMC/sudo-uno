@@ -183,6 +183,8 @@ namespace SudoUno {
         bool Game::TakeTurn(card::Card c, bool saidSudo, bool pickUp) {
             // Two valid actions: pick up a card from the deck, place a card from their hand
 
+            isSkipPlayed = false;
+
             util::log(index, "Player " + currentPlayer->getName() + " has entered their turn");
             util::log(index, "Num of cards in deck: " + to_string(cards.size()));
 
@@ -255,8 +257,6 @@ namespace SudoUno {
                         isSkipPlayed = true;
                         Player* next = getNextPlayer();
                         util::log(index, "Skipping " + next->getName() + "'s turn");
-                    } else {
-                        isSkipPlayed = false;
                     }
 
                     // Log on colour change
