@@ -117,14 +117,15 @@ namespace SudoUno {
 
             //if this doesn't work, std::shuffle <- this requires a random generator, need to import more stuff
             //shuffle all players, from start to end of vector
-            random_shuffle(players.begin(), players.end());
+            mt19937 mt(random_device{}());
+            shuffle(players.begin(), players.end(), mt);
             util::log(index, "Player order set");
 
             // players = gamePlayers;
             currentPlayer = &players[0];
             
             //shuffle cards, 
-            random_shuffle(cards.begin(), cards.end());
+            shuffle(cards.begin(), cards.end(), mt);
             util::log(index, "Cards shuffled");
 
             // -- Deal cards to players -- //
@@ -380,7 +381,8 @@ namespace SudoUno {
             }
 
             // Shuffle the deck
-            random_shuffle(cards.begin(), cards.end());
+            mt19937 mt(random_device{}());
+            shuffle(cards.begin(), cards.end(), mt);
             util::log(index, "Shuffled new deck");
             return newDeck;
         }
