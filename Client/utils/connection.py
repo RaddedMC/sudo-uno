@@ -1,5 +1,7 @@
 import telnetlib
 import select
+import threading
+import time
 
 
 class Connection:
@@ -29,3 +31,4 @@ class Connection:
     def close(self):
         self.connection.close()
         self.receive()
+

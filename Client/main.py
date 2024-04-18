@@ -34,14 +34,7 @@ def clear_terminal():
 # Player and game state
 players_map = {}
 
-client_hand = [
-    "Blue|Rev",
-    "Red|Skip",
-    "Green|PL2",
-    "Black|Wild",
-    "Black|Wild4",
-    "Red|9",
-]
+client_hand = []
 current_card = "Yellow|9"
 turn = "Player1"
 client_name = "Player1"
@@ -72,7 +65,7 @@ def lobby_loop(connection, client_name):
             print("The game has started!")
 
             game_loop(connection, client_name)
-            #TODO: maybe debug the wating room animation 
+            # TODO: maybe debug the wating room animation
         #     player_names = [
         #         line.split("= ")[1].strip("“”")
         #         for line in data.split("\n")
@@ -87,6 +80,130 @@ def lobby_loop(connection, client_name):
         #     dots += 1
         #     if dots > 3:
         #         dots = 1
+
+
+def process_player_turn(
+    data, connection, client_name, players_map, client_hand, current_card, turn
+):
+    # Check if it's the player's turn
+    rejected = True
+    if "Your turn" in data:
+        while rejected:
+            response = player_turn_helper(
+                data,
+                connection,
+                client_name,
+                players_map,
+                client_hand,
+                current_card,
+                turn,
+            )
+
+            # Handle server response
+            if "turn.approve" in response:
+                rejected = False
+                print(colorama.Fore.GREEN + "Your turn was approved.")
+                print(colorama.Fore.RESET)
+
+            if "You forgot to say sudo." in response:
+                print(colorama.Fore.RED + "You forgot to say sudo draw 2.")
+                print(colorama.Fore.RESET)
+
+            elif "turn.reject" in response:
+                reason = response.split("reason: ")[1]
+                print(f"Your turn was rejected. Reason: {reason}")
+                print(colorama.Fore.RED + "Your turn was rejected. Reason: ", reason)
+                print(colorama.Fore.RESET)
+
+                # Keep rejected as True to continue the loop
+
+    else:
+        printUI(players_map, client_name, client_hand, current_card, turn, False)
+
+
+def player_turn_helper(
+    data, connection, client_name, players_map, client_hand, current_card, turn
+):
+    printUI(players_map, client_name, client_hand, current_card, turn, True)
+    player_choice = input("Enter your choice: ")
+
+    match player_choice:
+        case "1":  # "1" means play a card
+            # Get card to play from array given number returns card string
+            card_to_play = handlePlayerChoice1(client_hand)
+            data = connection.send(
+                [
+                    "Turn.take\n",
+                    f'card = "{card_to_play}"\n',
+                    "pick = false\n",
+                    "sudo = false",
+                ]
+            )
+
+        case "2":  # "2" means pick up a card
+            data = connection.send(
+                ["Turn.take\n", 'card = ""\n', "pick = true\n", "sudo = false"]
+            )
+
+        case "3":  # Assume "3" means Calls UNO
+            if len(client_hand) == 2:
+                handlePlayerChoice3(client_name)
+                card_to_play = handlePlayerChoice1(client_hand)
+                # TODO: note if the card is not in hand will return "null" add logic server side to handle edge case
+                data = connection.send(
+                    [
+                        "Turn.take\n",
+                        f'card = "{card_to_play}"\n',
+                        "pick = false\n",
+                        "sudo = true",
+                    ]
+                )
+            else:
+                print(
+                    "You can only call sudo when you have 2 cards left. Please try again."
+                )
+                pass
+
+    lobby_end(data)
+
+    return data
+
+
+def process_game_state(data):
+    if "game.state.update" in data:
+        lines = data.split("\n")
+        for line in lines:
+            if "turn =" in line:
+                turn = line.split("= ")[1].replace('"', "")
+
+            if "players =" in line:
+                players_index = lines.index(line)
+                players = lines[players_index + 1 : players_index + 5]
+                # remove /t from the beginning of the line
+                players = [player.strip() for player in players]
+
+                for player in players:
+                    player = player.replace('"', "")
+                    # add them to the players_map     "Player 3": 4,
+                    player_name = player.split("|")[0]
+                    player_cards = int(player.split("|")[1])
+                    players_map[player_name] = player_cards
+
+            if "current_card =" in line:
+                current_card = line.split("= ")[1].replace('"', "")
+
+        if "your_cards =" in data:
+            lines = [line.strip() for line in data.split("\n")]
+            cards_index = lines.index("your_cards =")
+            # remove all the cards from client_hand
+            client_hand = []
+            client_hand = [
+                card.replace('"', "")
+                for card in lines[cards_index + 1 :]
+                if card and "Your turn" not in card
+            ]
+
+        return players_map, client_hand, current_card, turn
 
 
 def game_loop(connection, client_name):
@@ -105,106 +222,17 @@ def game_loop(connection, client_name):
 
         lobby_end(data)
 
-        if "game.state.update" in data:
-            lines = data.split("\n")
-            for line in lines:
-                if "turn =" in line:
-                    turn = line.split("= ")[1].replace('"', "")
+        players_map, client_hand, current_card, turn = process_game_state(data)
 
-                if "players =" in line:
-                    players_index = lines.index(line)
-                    players = lines[players_index + 1 : players_index + 5]
-                    # remove /t from the beginning of the line
-                    players = [player.strip() for player in players]
+        process_player_turn(
+            data, connection, client_name, players_map, client_hand, current_card, turn
+        )
 
-                    for player in players:
-                        player = player.replace('"', "")
-                        # add them to the players_map     "Player 3": 4,
-                        player_name = player.split("|")[0]
-                        player_cards = int(player.split("|")[1])
-                        players_map[player_name] = player_cards
-
-                if "current_card =" in line:
-                    current_card = line.split("= ")[1].replace('"', "")
-
-            if "your_cards =" in data:
-                lines = [line.strip() for line in data.split("\n")]
-                cards_index = lines.index("your_cards =")
-                client_hand = [
-                    card.replace('"', "")
-                    for card in lines[cards_index + 1 :]
-                    if card and "Your turn" not in card
-                ]
-
-        # Check if it's the player's turn
-        if "Your turn" in data:
-            printUI(players_map, client_name, client_hand, current_card, turn, True)
-            player_choice = input("Enter your choice: ")
-
-            if player_choice == "2":  # Assume "2" means pick up a card
-                data = connection.send(
-                    ["Turn.take\n", 'card = ""\n', "pick = true\n", "sudo = false"]
-                )
-                #TODO add logic to handle mapping the drawn card: 
-                #--------------------------------------
-                drawn_card = "Red|5"
-                #--------------------------------------
-
-                #Update ui to show what card got drawn
-                handlePlayerChoice2(drawn_card)
-            elif player_choice == "1":  # Assume "1" means place down a card
-                #Get card to play from array given number returns card string
-                #TODO: note if the card is not in hand will return "null" add logic server side to handle edge case
-                card_to_play = handlePlayerChoice1(client_hand)
-                data = connection.send(
-                    [
-                        "Turn.take\n",
-                        f'card = "{card_to_play}"\n',
-                        "pick = false\n",
-                        "sudo = false",
-                    ]
-                )
-            elif player_choice == "3": 
-                if len(client_hand) == 2:
-                    handlePlayerChoice3(client_name)
-                    card_to_play = handlePlayerChoice1(client_hand)
-                    #TODO: note if the card is not in hand will return "null" add logic server side to handle edge case
-                    data = connection.send(
-                        [
-                            "Turn.take\n",
-                            f'card = "{card_to_play}"\n',
-                            "pick = false\n",
-                            "sudo = true",
-                        ]
-                    )
-                else:
-                    print("You can only call sudo when you have 2 cards left. Please try again.")
-                    pass
-            
-            lobby_end(data)
-
-            # Handle server response
-            if "Turn.approve" in data:
-                print("Your turn was approved.")
-                if "You forgot to say sudo." in data:
-                    print("You forgot to say sudo draw 2.")
-                #time.sleep(2) # Wait for 2 seconds then clear the display
-                clear_terminal()
-
-            elif "Turn.reject" in data:
-                reason = data.split("reason: ")[1]
-                print(f"Your turn was rejected. Reason: {reason}")
-                #time.sleep(2) # Wait for 2 seconds then clear the display
-                clear_terminal()
-
-
-        else:
-            printUI(players_map, client_name, client_hand, current_card, turn, False)
-            # Wait for game state change
+        # Wait for game state change
 
 
 def lobby_end(data):
-    if "Lobby.end" in data:
+    if "lobby.end" in data:
         if "ragequit" in data:
             name = data.split("player ")[1].split(" ragequit")[0]
             print(f"The game ended because player {name} ragequit.")
@@ -234,8 +262,7 @@ def main():
     # ip, port = handleGetServer()
     connection = Connection("127.0.0.1", "6969")
 
-    #print welcome message from server
-
+    # print welcome message from server
     # get the username as argument from the command line
     if len(sys.argv) < 2:
         client_name = handleGetName()

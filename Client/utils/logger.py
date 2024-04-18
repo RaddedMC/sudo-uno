@@ -9,7 +9,7 @@ color_codes = {
     "Red": Fore.RED,
     "Green": Fore.GREEN,
     "Yellow": Fore.YELLOW,
-    "Black": Fore.WHITE + Back.BLACK  # White text on black background for Black cards
+    "Black": Fore.WHITE + Back.BLACK,  # White text on black background for Black cards
 }
 
 type_char_map = {
@@ -27,8 +27,9 @@ type_char_map = {
     "Skip": "S",
     "PL2": "+2",
     "Wild": "W",
-    "Wild4": "+4"
+    "Wild4": "+4",
 }
+
 
 def print_card_type(card_type):
     type_map = {
@@ -86,21 +87,26 @@ def print_card_type(card_type):
 """,
         "Wild4": r"""
 
-"""
+""",
     }
 
     if card_type in type_map:
-        print(type_map[card_type].replace('#', '\n'))
+        print(type_map[card_type].replace("#", "\n"))
     else:
         print(f"Invalid card type: {card_type}")
-        
 
 
 def printHand(hand):
     """Prints the player's hand of cards."""
-    hand_str = " ".join([f"{color_codes.get(color, Fore.RESET)}{color}|{type}{Style.RESET_ALL}" for color, type in [card.split("|") for card in hand]])
+    hand_str = " ".join(
+        [
+            f"{color_codes.get(color, Fore.RESET)}{color}|{type}{Style.RESET_ALL}"
+            for color, type in [card.split("|") for card in hand]
+        ]
+    )
     print(f"Your hand: {hand_str}")
-    
+
+
 def printHand2(hand):
     """Prints the player's hand of cards."""
     print("Your hand:\n")
@@ -109,24 +115,32 @@ def printHand2(hand):
         color_code = color_codes.get(color, Fore.RESET)
         print(f"{i}. {color_code}{color}|{type}{Style.RESET_ALL}")
 
+
 def printOpponentsHand(players_map, client_name):
     """Prints the opponents' names and the number of cards they have."""
     for player, num_cards in players_map.items():
         if player != client_name:
             print(f"{player} has {num_cards} cards: {' '.join(['?'] * num_cards)}")
 
+
 def printTopcard(top_card):
     """Prints the top card on the discard pile."""
     color, type = top_card.split("|")
     color_code = color_codes.get(color, Fore.RESET)
-    print(f"{Fore.YELLOW}{Style.BRIGHT}Top card:{Style.RESET_ALL} {color_code}{Style.BRIGHT}{color}|{type}{Style.RESET_ALL}")
+    print(
+        f"{Fore.YELLOW}{Style.BRIGHT}\nTop card:{Style.RESET_ALL} {color_code}{Style.BRIGHT}{color}|{type}{Style.RESET_ALL}\n"
+    )
+
 
 # Updated printTurn function
 def printTurn(player_name, is_current_turn):
     if is_current_turn:
         print(f"{Fore.GREEN}{Style.BRIGHT}It's your turn!{Style.RESET_ALL}")
     else:
-        print(f"{Fore.RED}{Style.BRIGHT}Waiting for {player_name}'s turn...{Style.RESET_ALL}")
+        print(
+            f"{Fore.RED}{Style.BRIGHT}Waiting for {player_name}'s turn...{Style.RESET_ALL}"
+        )
+
 
 def printOptions():
     options = ["Play a card", "Draw a card", "Call UNO"]
@@ -134,10 +148,13 @@ def printOptions():
     print("Options:")
     for i, option in enumerate(options, start=1):
         print(f"{i}. {option}")
-        
+
+
 def handlePlayerChoice1(hand):
     printHand2(hand)
-    card_index = int(input("Enter the number corresponding to the card you want to play: "))
+    card_index = int(
+        input("Enter the number corresponding to the card you want to play: ")
+    )
     if 1 <= card_index <= len(hand):
         played_card = hand[card_index - 1]
         color, type = played_card.split("|")
@@ -149,27 +166,36 @@ def handlePlayerChoice1(hand):
         print("Invalid card number. Please try again.")
         return "null"
 
+
 def handlePlayerChoice2(drawn_card):
     color, type = drawn_card.split("|")
     color_code = color_codes.get(color, Fore.RESET)
     print(f"You drew {color_code}{color}|{type}{Style.RESET_ALL}")
-    
+
+
 def handlePlayerChoice3(client_name):
     print(f"{Fore.RED}{Style.BRIGHT}{client_name} called SUDO!{Style.RESET_ALL}")
-    
+
     print("Invalid choice. Please try again.")
-        
+
+
 def handerGameInit():
-    #Add logo 
-    print(f"{Fore.RED}{Style.BRIGHT} .----------------.  .----------------.  .----------------.  .----------------. \n| .--------------. || .--------------. || .--------------. || .--------------. |\n| |    _______   | || | _____  _____ | || |  ________    | || |     ____     | |\n| |   /  ___  |  | || ||_   _||_   _|| || | |_   ___ `.  | || |   .'    `.   | |\n| |  |  (__ \\_|  | || |  | |    | |  | || |   | |   `. \\ | || |  /  .--.  \\  | |\n| |   '.___`-.   | || |  | '    ' |  | || |   | |    | | | || |  | |    | |  | |\n| |  |`\\____) |  | || |   \\ `--' /   | || |  _| |___.' / | || |  \\  `--'  /  | |\n| |  |_______.'  | || |    `.__.'    | || | |________.'  | || |   `.____.'   | |\n| |              | || |              | || |              | || |              | |\n| '--------------' || '--------------' || '--------------' || '--------------' |\n '----------------'  '----------------'  '----------------'  '----------------' \n\n                                     ______                                     \n                                    |______|                                    \n\n           .----------------.  .-----------------. .----------------.           \n          | .--------------. || .--------------. || .--------------. |          \n          | | _____  _____ | || | ____  _____  | || |     ____     | |          \n          | ||_   _||_   _|| || ||_   \\|_   _| | || |   .'    `.   | |          \n          | |  | |    | |  | || |  |   \\ | |   | || |  /  .--.  \\  | |          \n          | |  | '    ' |  | || |  | |\\ \\| |   | || |  | |    | |  | |          \n          | |   \\ `--' /   | || | _| |_\\   |_  | || |  \\  `--'  /  | |          \n          | |    `.__.'    | || ||_____|\\____| | || |   `.____.'   | |          \n          | |              | || |              | || |              | |          \n          | '--------------' || '--------------' || '--------------' |          \n           '----------------'  '----------------'  '----------------'           {Style.RESET_ALL}")
-    #Add game rules
+    # Add logo
+    print(
+        f"{Fore.RED}{Style.BRIGHT} .----------------.  .----------------.  .----------------.  .----------------. \n| .--------------. || .--------------. || .--------------. || .--------------. |\n| |    _______   | || | _____  _____ | || |  ________    | || |     ____     | |\n| |   /  ___  |  | || ||_   _||_   _|| || | |_   ___ `.  | || |   .'    `.   | |\n| |  |  (__ \\_|  | || |  | |    | |  | || |   | |   `. \\ | || |  /  .--.  \\  | |\n| |   '.___`-.   | || |  | '    ' |  | || |   | |    | | | || |  | |    | |  | |\n| |  |`\\____) |  | || |   \\ `--' /   | || |  _| |___.' / | || |  \\  `--'  /  | |\n| |  |_______.'  | || |    `.__.'    | || | |________.'  | || |   `.____.'   | |\n| |              | || |              | || |              | || |              | |\n| '--------------' || '--------------' || '--------------' || '--------------' |\n '----------------'  '----------------'  '----------------'  '----------------' \n\n                                     ______                                     \n                                    |______|                                    \n\n           .----------------.  .-----------------. .----------------.           \n          | .--------------. || .--------------. || .--------------. |          \n          | | _____  _____ | || | ____  _____  | || |     ____     | |          \n          | ||_   _||_   _|| || ||_   \\|_   _| | || |   .'    `.   | |          \n          | |  | |    | |  | || |  |   \\ | |   | || |  /  .--.  \\  | |          \n          | |  | '    ' |  | || |  | |\\ \\| |   | || |  | |    | |  | |          \n          | |   \\ `--' /   | || | _| |_\\   |_  | || |  \\  `--'  /  | |          \n          | |    `.__.'    | || ||_____|\\____| | || |   `.____.'   | |          \n          | |              | || |              | || |              | |          \n          | '--------------' || '--------------' || '--------------' |          \n           '----------------'  '----------------'  '----------------'           {Style.RESET_ALL}"
+    )
+    # Add game rules
     print(f"{Fore.YELLOW}{Style.BRIGHT}Game Rules:{Style.RESET_ALL}")
-    #print_card_type("0")
+    # print_card_type("0")
     pass
 
+
 def handleGetName():
-    print(f"{Fore.WHITE}{Style.BRIGHT}Enter your username to get started:{Style.RESET_ALL}")
+    print(
+        f"{Fore.WHITE}{Style.BRIGHT}Enter your username to get started:{Style.RESET_ALL}"
+    )
     return input("")
+
 
 def handleGetServer():
     print(f"{Fore.WHITE}{Style.BRIGHT}Enter the server IP address:{Style.RESET_ALL}")
@@ -179,12 +205,17 @@ def handleGetServer():
 
     return ip, port
 
+
 def waitingForLobby(x):
     if x == 3:
-        print(f"{Fore.YELLOW}{Style.BRIGHT}Waiting for other players...{Style.RESET_ALL}")
+        print(
+            f"{Fore.YELLOW}{Style.BRIGHT}Waiting for other players...{Style.RESET_ALL}"
+        )
         return 0
     if x == 2:
-        print(f"{Fore.YELLOW}{Style.BRIGHT}Waiting for other players..{Style.RESET_ALL}")
+        print(
+            f"{Fore.YELLOW}{Style.BRIGHT}Waiting for other players..{Style.RESET_ALL}"
+        )
         return 3
     if x == 1:
         print(f"{Fore.YELLOW}{Style.BRIGHT}Waiting for other players.{Style.RESET_ALL}")
@@ -193,15 +224,17 @@ def waitingForLobby(x):
         print(f"{Fore.YELLOW}{Style.BRIGHT}Waiting for other players{Style.RESET_ALL}")
         return 1
 
+
 def handleJoinedGame():
-    #Print this in red font
+    # Print this in red font
     print(f"{Fore.GREEN}{Style.BRIGHT}Game has started!{Style.RESET_ALL}")
 
 
 def handleGetNumPlayers():
     return int(input("Enter the number of players (2-4): "))
 
-def printUI(players_map,client_name,client_hand,current_card,turn,bool):
+
+def printUI(players_map, client_name, client_hand, current_card, turn, bool):
     print("SUDO UNO Game UI!")
     printOpponentsHand(players_map, client_name)
     printHand(client_hand)
@@ -214,8 +247,9 @@ def printUI(players_map,client_name,client_hand,current_card,turn,bool):
 # Example usage
 if __name__ == "__main__":
     printOpponentsHand("Player 2", 5)
-    printHand(["Blue|Rev", "Red|Skip", "Green|PL2", "Black|Wild", "Black|Wild4", "Red|9"])
+    printHand(
+        ["Blue|Rev", "Red|Skip", "Green|PL2", "Black|Wild", "Black|Wild4", "Red|9"]
+    )
     printTopcard("Yellow|9")
     printTurn("Player 1")
     printOptions(["Play a card", "Draw a card", "Call UNO"])
-    
