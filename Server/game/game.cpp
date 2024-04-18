@@ -227,7 +227,6 @@ namespace SudoUno {
                 string msg = "turn.approve\n";
 
                 // Consume card
-                currentPlayer->removeCard(c);
                 currentCard = c;
 
                 // Perform the action associated with the card if it's an action card
@@ -280,6 +279,8 @@ namespace SudoUno {
                     string err = c.getCardEncoding() + " is neither a number card nor an action card";
                     throw err;
                 }
+
+                currentPlayer->removeCard(c);
 
                 // Was this the player's last card?
                 if (currentPlayer->getHand().size() == 0) {
@@ -392,7 +393,7 @@ namespace SudoUno {
             return newDeck;
         }
 
-        // Creates the card deck and shuffles it.
+        // Creates the card deck
         vector<card::Card> Game::createDeck()
         {
             // Initialize an empty deck
