@@ -161,6 +161,7 @@ namespace SudoUno {
 
         // Terminates the game given some reason.
         // Reason is either the name of the player that won or "error"
+        // TODO: handle player ragequit and unexpected error
         void Game::End(string reason) {
             // TODO: something seems off here
             //End the game by disconnecting all players in session then closing the server thread
