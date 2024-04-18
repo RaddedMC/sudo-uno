@@ -165,16 +165,7 @@ namespace SudoUno {
             // TODO: something seems off here
             //End the game by disconnecting all players in session then closing the server thread
             for (int i = 0; i < this->players.size(); i++) {
-                if(players[i].getName() == reason) {
-                    //Send a message to the player
-                    players[i].sendToSocket("Game Over: You won!");
-                } else if(reason != "error"){
-                    //Send a message to the player
-                    players[i].sendToSocket("Game over: " + reason + " won!");
-                } else {
-                    //Send a message to the player
-                    players[i].sendToSocket("Game over: An error occurred.");
-                }
+                players[i].sendToSocket("lobby.end\n\tfriendly_msg = \"" + reason + "\"");
 
                 //Close the player's socket
                 // TODO: add a CloseSocket method for a player
@@ -286,7 +277,7 @@ namespace SudoUno {
                 if (currentPlayer->getHand().size() == 0) {
                     util::log(index, "Player " + currentPlayer->getName() + " placed down their last card (" + c.getCardEncoding() + ")");
                     // Player wins, end the game
-                    End(currentPlayer->getName());
+                    End("The game ended because player " + currentPlayer->getName() + " placed their last card and won!");
                     return true;
                 }
 

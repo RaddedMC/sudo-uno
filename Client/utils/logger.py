@@ -187,8 +187,6 @@ def handlePlayerChoice2(drawn_card):
 def handlePlayerChoice3(client_name):
     print(f"{Fore.RED}{Style.BRIGHT}{client_name} called SUDO!{Style.RESET_ALL}")
 
-    print("Invalid choice. Please try again.")
-
 
 def handerGameInit():
     # Add logo
