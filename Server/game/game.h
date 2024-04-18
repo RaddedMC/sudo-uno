@@ -128,8 +128,17 @@ namespace SudoUno {
 
                 // Removes a card from the player's hand if it exists
                 void removeCard(card::Card c) {
-                    // Find the first occurrence of the card
-                    vector<card::Card>::iterator iter = find(hand.begin(), hand.end(), c);
+
+                    vector<card::Card>::iterator iter;  
+
+                    // Guard clauses to ensure wildcards are removed
+                    if (c.getType() == card::CardType::wild) {
+                        iter = find(hand.begin(), hand.end(), card::Card(card::CardColor::black, card::CardType::wild));
+                    } else if (c.getType() == card::CardType::wild4) {
+                        iter = find(hand.begin(), hand.end(), card::Card(card::CardColor::black, card::CardType::wild4));
+                    } else {
+                        iter = find(hand.begin(), hand.end(), c);
+                    }
 
                     // Card is in player's hand, remove it
                     if (iter != hand.end()) {
