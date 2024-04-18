@@ -142,6 +142,9 @@ namespace SudoUno {
                     // Find the first occurrence of the card
                     for (int i = 0; i < hand.size(); i++) {
                         cout << "Comparing " << c.getCardEncoding() << " to " << hand[i].getCardEncoding() << endl;
+                        if(c.getType() == card::CardType::wild || c.getType() == card::CardType::wild4) {
+                            return true;
+                        }
                         if (c.getColor() == hand[i].getColor() && c.getType() == hand[i].getType()) {
                             return true;
                         }

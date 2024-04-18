@@ -85,6 +85,7 @@ def lobby_loop(connection, client_name):
 def process_player_turn(
     data, connection, client_name, players_map, client_hand, current_card, turn
 ):
+    clear_terminal()
     # Check if it's the player's turn
     rejected = True
     if "Your turn" in data:
@@ -192,16 +193,16 @@ def process_game_state(data):
             if "current_card =" in line:
                 current_card = line.split("= ")[1].replace('"', "")
 
-        if "your_cards =" in data:
-            lines = [line.strip() for line in data.split("\n")]
-            cards_index = lines.index("your_cards =")
-            # remove all the cards from client_hand
-            client_hand = []
-            client_hand = [
-                card.replace('"', "")
-                for card in lines[cards_index + 1 :]
-                if card and "Your turn" not in card
-            ]
+    if "your_cards =" in data:
+        lines = [line.strip() for line in data.split("\n")]
+        cards_index = lines.index("your_cards =")
+        # remove all the cards from client_hand
+        client_hand = []
+        client_hand = [
+            card.replace('"', "")
+            for card in lines[cards_index + 1 :]
+            if card and "Your turn" not in card
+        ]
 
         return players_map, client_hand, current_card, turn
 
@@ -258,16 +259,19 @@ def lobby_end(data):
 def main():
     handerGameInit()
 
-    # init server connection
-    # ip, port = handleGetServer()
-    connection = Connection("127.0.0.1", "6969")
-
     # print welcome message from server
     # get the username as argument from the command line
     if len(sys.argv) < 2:
         client_name = handleGetName()
+        ip, port = handleGetServer()
+
     else:
         client_name = sys.argv[1]
+        ip = sys.argv[2]
+        port = sys.argv[3]
+
+    # init server connection
+    connection = Connection(ip, port)
 
     response = connection.send(["Lobby.request", f'\nname = "{client_name}"'])
 
