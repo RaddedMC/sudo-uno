@@ -256,10 +256,12 @@ def printUI(players_map, client_name, client_hand, current_card, turn, bool):
 
 # Example usage
 if __name__ == "__main__":
-    printOpponentsHand("Player 2", 5)
+    print("SUDO UNO Game UI!")
+    print("Hello, " + "Clutch" + "!")
+    printOpponentsHand({"Player 2":5,"Player 3":2, "Player 4":7}, "Clutch")
     printHand(
         ["Blue|Rev", "Red|Skip", "Green|PL2", "Black|Wild", "Black|Wild4", "Red|9"]
     )
     printTopcard("Yellow|9")
-    printTurn("Player 1")
-    printOptions(["Play a card", "Draw a card", "Call UNO"])
+    printTurn("Clutch", True)
+    printOptions()

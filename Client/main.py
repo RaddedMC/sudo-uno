@@ -128,8 +128,7 @@ def player_turn_helper(
     printUI(players_map, client_name, client_hand, current_card, turn, True)
     player_choice = input("Enter your choice: ")
 
-    match player_choice:
-        case "1":  # "1" means play a card
+    if player_choice == "1":
             # Get card to play from array given number returns card string
             card_to_play = handlePlayerChoice1(client_hand)
             data = connection.send(
@@ -141,12 +140,12 @@ def player_turn_helper(
                 ]
             )
 
-        case "2":  # "2" means pick up a card
+    elif player_choice ==  "2":  # "2" means pick up a card
             data = connection.send(
                 ["Turn.take\n", 'card = ""\n', "pick = true\n", "sudo = false"]
             )
 
-        case "3":  # Assume "3" means Calls UNO
+    elif player_choice ==  "3":  # Assume "3" means Calls UNO
             if len(client_hand) == 2:
                 handlePlayerChoice3(client_name)
                 card_to_play = handlePlayerChoice1(client_hand)
@@ -164,6 +163,8 @@ def player_turn_helper(
                     "You can only call sudo when you have 2 cards left. Please try again."
                 )
                 pass
+    else:
+        pass
 
     lobby_end(data)
 

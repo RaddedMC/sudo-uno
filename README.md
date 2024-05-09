@@ -1,7 +1,7 @@
 
 <p align="center">
     <a href="https://github.com/RaddedMC/sudo-uno">
-        <img src="logo.webp" alt="sudo uno logo" width=400 height=400>
+        <img src="./img/logo.webp" alt="sudo uno logo" width=400 height=400>
     </a>
 </p>
 
@@ -35,12 +35,30 @@ python3 client.py
 
 ## 📸 Screenshots
 
-![Gameplay Screenshot](path/to/screenshot1.png) <!-- Placeholder for a gameplay screenshot -->
-![Lobby Screenshot](path/to/screenshot2.png) <!-- Placeholder for a lobby screenshot -->
+### Intro Screen:
+<p align="center">
+    <a href="https://github.com/RaddedMC/sudo-uno">
+        <img src="img/StartScreen.png" alt="sudo uno logo" height=300>
+    </a>
+</p>
+
+### Waiting for Turn:
+<p align="center">
+    <a href="https://github.com/RaddedMC/sudo-uno">
+        <img src="img/notTurn.png" alt="sudo uno logo" height=150>
+    </a>
+</p>
+
+### Your Turn:
+<p align="center">
+    <a href="https://github.com/RaddedMC/sudo-uno">
+        <img src="img/isTurn.png" alt="sudo uno logo" height=200>
+    </a>
+</p>
 
 ## 🎥 Demo
 
-[![Watch the demo](path/to/demo_thumbnail.png)](https://www.youtube.com/watch?v=dQw4w9WgXcQ) <!-- Placeholder for video demo thumbnail and link -->
+![Watch the demo](https://www.youtube.com/watch?v=dQw4w9WgXcQ) <!-- Placeholder for video demo thumbnail and link -->
 
 ## ✨ Features
 
@@ -51,10 +69,10 @@ python3 client.py
 
 ## 🔧 Setup Instructions
 
-Detailed setup instructions are provided for both server and client. Ensure you follow these to get sudo-uno up and running on your system.
+Detailed setup instructions are provided for both server and client in the documentation. Ensure you follow these to get sudo-uno up and running on your system.
 
-- [Server Setup](path/to/server_setup.md)
-- [Client Setup](path/to/client_setup.md)
+- [Server Setup](https://docs.google.com/document/d/1D6nZBmPCcTYNuQuhGwmPKS6JeCWb1iTyJ1TUG9PHjhE/edit#heading=h.7venikefflcz)
+- [Client Setup](https://docs.google.com/document/d/1D6nZBmPCcTYNuQuhGwmPKS6JeCWb1iTyJ1TUG9PHjhE/edit#heading=h.7venikefflcz)
 
 ## 🛠 Built With
 
@@ -81,4 +99,4 @@ Distributed under the UWO License. See `LICENSE` for more information.
 
 ## 🙏 Acknowledgments
 
-- James Nicholls, Dylan Abbinett, Paul Gherghel, Lukas Adie, Pratik Gupta, and Kelsey Kloosterman for their invaluable contributions to the project.
+- [James Nicholls](https://github.com/RaddedMC), [Dylan Abbinett](https://github.com/dabbinet), [Paul Gherghel](https://github.com/ClutchForce), [Lukas Adie](https://github.com/lukadd16), [Pratik Gupta](https://github.com/pratikngupta), and [Kelsey Kloosterman](https://github.com/KelseyKloosterman) for their invaluable contributions to the project.
